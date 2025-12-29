@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -11,9 +10,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  /* =========================
-     NORMAL LOGIN
-  ========================= */
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -44,33 +40,6 @@ export default function Login() {
       }
     } catch (err) {
       setError(err.message);
-    }
-  };
-
-  /* =========================
-     GOOGLE LOGIN
-  ========================= */
-  const handleGoogleSuccess = async (credential) => {
-    try {
-      const res = await fetch("http://localhost:5001/api/auth/google", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: credential }),
-      });
-
-      const data = await res.json();
-
-      localStorage.setItem("learnix_token", data.token);
-      localStorage.setItem("learnix_user", JSON.stringify(data.user));
-      localStorage.setItem("learnix_logged_in", "true");
-
-      if (redirect) {
-        navigate(redirect);
-      } else {
-        navigate("/students");
-      }
-    } catch {
-      setError("Google Sign-in failed");
     }
   };
 
@@ -113,18 +82,10 @@ export default function Login() {
           Login
         </button>
 
-        <div className="flex justify-center mt-4">
-          <GoogleLogin
-            onSuccess={(res) => handleGoogleSuccess(res.credential)}
-            onError={() => setError("Google Login Failed")}
-          />
-        </div>
-
         <div className="text-sm text-center mt-4">
           <Link to="/forgot-password" className="text-indigo-600 hover:underline">
             Forgot Password?
           </Link>
-
         </div>
       </form>
     </div>
