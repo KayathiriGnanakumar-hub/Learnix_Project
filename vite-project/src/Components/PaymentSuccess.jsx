@@ -6,49 +6,38 @@ export default function PaymentSuccess() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const saveEnrollments = () => {
-      const cartItems = getCartItems();
+    const enroll = async () => {
+      const token = localStorage.getItem("learnix_token");
+      const user = JSON.parse(localStorage.getItem("learnix_user"));
+      const cart = getCartItems();
 
-      const existingEnrollments =
-        JSON.parse(localStorage.getItem("enrollments")) || [];
-
-      const newEnrollments = cartItems.map((course) => ({
-        ...course,
-        progress: 0,
-        completed: false,
-        enrolledAt: new Date().toISOString(),
-      }));
-
-      localStorage.setItem(
-        "enrollments",
-        JSON.stringify([
-          ...existingEnrollments,
-          ...newEnrollments,
-        ])
-      );
+      for (const course of cart) {
+        await fetch("http://localhost:5001/api/enroll", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            courseId: course.id,
+            userId: user.id,
+          }),
+        });
+      }
 
       clearCart();
+      navigate("/students");
     };
 
-    saveEnrollments();
-  }, []);
+    enroll();
+  }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-green-50">
-      <div className="bg-white p-10 rounded-2xl shadow text-center">
-        <h1 className="text-3xl font-bold text-green-600 mb-4">
-          Payment Successful 🎉
-        </h1>
-        <p className="mb-6 text-gray-600">
-          You are now enrolled in your courses.
-        </p>
-        <button
-          onClick={() => navigate("/students/courses")}
-          className="px-8 py-3 bg-green-600 text-white rounded-lg"
-        >
-          Go to My Courses
-        </button>
-      </div>
+    <div className="min-h-screen flex items-center justify-center
+      bg-gradient-to-br from-indigo-600 to-purple-700">
+      <h2 className="text-3xl font-bold text-white">
+        Payment Successful 🎉
+      </h2>
     </div>
   );
 }

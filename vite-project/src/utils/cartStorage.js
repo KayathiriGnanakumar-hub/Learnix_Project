@@ -1,22 +1,18 @@
 const CART_KEY = "learnix_cart";
 
-/* Get cart items from localStorage */
-export function getCartItems() {
-  const data = localStorage.getItem(CART_KEY);
-  return data ? JSON.parse(data) : [];
-}
+export const getCartItems = () => {
+  return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+};
 
-/* Save cart items to localStorage */
-export function setCartItems(items) {
+export const setCartItems = (items) => {
   localStorage.setItem(CART_KEY, JSON.stringify(items));
-}
+};
 
-/* Get total cart count */
-export function getCartCount() {
-  return getCartItems().length;
-}
+export const removeFromCart = (id) => {
+  const cart = getCartItems().filter(item => item.id !== id);
+  setCartItems(cart);
+};
 
-/* Clear cart (future use) */
-export function clearCart() {
+export const clearCart = () => {
   localStorage.removeItem(CART_KEY);
-}
+};

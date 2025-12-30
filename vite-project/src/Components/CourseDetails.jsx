@@ -8,58 +8,76 @@ export default function CourseDetails() {
   const [course, setCourse] = useState(null);
 
   useEffect(() => {
-    const courses =
-      JSON.parse(localStorage.getItem("courses")) || [];
-    const found = courses.find((c) => c.id === id);
-    setCourse(found || null);
+    fetch(`http://localhost:5001/api/courses/${id}`)
+      .then(res => res.json())
+      .then(setCourse);
   }, [id]);
 
-  const addToCart = () => {
-    const cart = getCartItems();
-    if (cart.some((item) => item.id === course.id)) {
-      alert("Course already in cart");
+  const handleEnroll = () => {
+    const token = localStorage.getItem("learnix_token");
+
+    if (!token) {
+      navigate(`/login?redirect=/course/${id}`);
       return;
     }
-    setCartItems([...cart, course]);
-    navigate("/cart");
+
+    const cart = getCartItems();
+    if (!cart.find(c => c.id === course.id)) {
+      setCartItems([...cart, course]);
+    }
+
+    navigate("/payment");
   };
 
-  if (!course) return <p className="pt-28 text-center">Course not found</p>;
+  if (!course) return <p className="pt-28 text-center">Loading...</p>;
 
   return (
-    <section className="pt-28 pb-20 bg-gray-50 min-h-screen">
-      <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow">
+    <section className="pt-28 pb-20 min-h-screen bg-white">
+      <div className="max-w-5xl mx-auto bg-white shadow-xl rounded-2xl p-8">
+
         <img
           src={course.image}
           alt={course.title}
-          className="w-full h-64 object-cover rounded-xl mb-6"
+          className="w-full h-72 object-cover rounded-xl mb-6"
         />
 
         <h1 className="text-3xl font-bold text-indigo-700 mb-2">
           {course.title}
         </h1>
 
-        {course.duration && (
-          <p className="text-gray-600 mb-2">
-            Duration: {course.duration}
-          </p>
-        )}
+        <p className="text-gray-600 mb-4">{course.description}</p>
 
-        <p className="text-xl font-semibold text-purple-700 mb-4">
+        <div className="grid grid-cols-4 gap-4 mb-6 text-sm">
+          <Info label="Instructor" value={course.instructor} />
+          <Info label="Duration" value={course.duration} />
+          <Info label="Level" value={course.level || "Beginner"} />
+          <Info label="Students" value={course.students || 0} />
+        </div>
+
+        <p className="text-2xl font-bold text-purple-700 mb-6">
           ₹{course.price}
         </p>
 
-        {course.description && (
-          <p className="mt-4">{course.description}</p>
-        )}
-
         <button
-          onClick={addToCart}
-          className="mt-6 w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+          onClick={handleEnroll}
+          className="w-full py-3 rounded-xl font-semibold
+          bg-gradient-to-r from-indigo-600 to-purple-600 text-white"
         >
-          Add to Cart
+          Enroll Now
         </button>
+
       </div>
     </section>
+  );
+}
+
+function Info({ label, value }) {
+  return (
+    <div className="rounded-xl p-[2px] bg-gradient-to-r from-indigo-500 to-purple-600">
+      <div className="bg-white rounded-xl p-3 text-center">
+        <p className="text-gray-500">{label}</p>
+        <p className="font-semibold text-indigo-700">{value}</p>
+      </div>
+    </div>
   );
 }

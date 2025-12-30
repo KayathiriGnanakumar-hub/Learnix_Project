@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import db from "../db/db.js";
+import db from "../config/db.js";
 
 /* =========================
    REGISTER

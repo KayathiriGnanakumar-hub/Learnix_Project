@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import nodemailer from "nodemailer";
-import db from "../db/db.js";
+import db from "../config/db.js";
 
 /* =========================
    EMAIL CONFIG

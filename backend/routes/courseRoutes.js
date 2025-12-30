@@ -1,20 +1,19 @@
 import express from "express";
-import { registerUser, loginUser } from "../controllers/authController.js";
-import { googleLogin } from "../controllers/googleAuthController.js";
 import {
-  forgotPassword,
-  resetPassword,
-} from "../controllers/passwordController.js";
+  addCourse,
+  getAllCourses,
+  getCourseById,
+  deleteCourse,
+} from "../Controllers/courseController.js";
 
 const router = express.Router();
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.post("/google", googleLogin);
+// PUBLIC
+router.get("/", getAllCourses);
+router.get("/:id", getCourseById);
 
-// 🔐 PASSWORD
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password", resetPassword);
+// ADMIN (later you can protect these)
+router.post("/", addCourse);
+router.delete("/:id", deleteCourse);
 
 export default router;
-

@@ -27,10 +27,11 @@ export default function Login() {
         throw new Error(data.message || "Login failed");
       }
 
+      // ✅ SAVE AUTH
       localStorage.setItem("learnix_token", data.token);
       localStorage.setItem("learnix_user", JSON.stringify(data.user));
-      localStorage.setItem("learnix_logged_in", "true");
 
+      // ✅ REDIRECT FIX (VERY IMPORTANT)
       if (redirect) {
         navigate(redirect);
       } else if (data.user.isAdmin) {
@@ -38,6 +39,7 @@ export default function Login() {
       } else {
         navigate("/students");
       }
+
     } catch (err) {
       setError(err.message);
     }
@@ -77,16 +79,17 @@ export default function Login() {
 
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white py-3 rounded hover:bg-indigo-700 transition"
+          className="w-full bg-indigo-600 text-white py-3 rounded hover:bg-indigo-700"
         >
           Login
         </button>
 
-        <div className="text-sm text-center mt-4">
-          <Link to="/forgot-password" className="text-indigo-600 hover:underline">
-            Forgot Password?
+        <p className="text-sm text-center mt-4">
+          Don’t have an account?{" "}
+          <Link to="/register" className="text-indigo-600 hover:underline">
+            Register
           </Link>
-        </div>
+        </p>
       </form>
     </div>
   );

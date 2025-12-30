@@ -14,7 +14,7 @@ import PaymentSuccess from "./Components/PaymentSuccess";
 
 /* ===== STUDENT ===== */
 import StudentLayout from "./Components/students/StudentLayout";
-import Dashboard from "./Components/students/dashboard";
+import Dashboard from "./Components/students/Dashboard";
 
 /* ===== ADMIN ===== */
 import AdminLayout from "./Components/admin/AdminLayout";
@@ -31,16 +31,13 @@ export default function App() {
           PUBLIC ROUTES (WITH NAVBAR)
       ========================= */}
       <Route element={<PublicLayout />}>
-        <Route path="/" element={<Hero />} />
+        <Route path="/" element={<Hero />} />          {/* ✅ FIX */}
         <Route path="/courses" element={<Courses />} />
         <Route path="/course/:id" element={<CourseDetails />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/cart" element={<Cart />} />
-
-        {/* AUTH UI (WITH NAVBAR) */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-    
       </Route>
 
       {/* =========================
@@ -95,4 +92,3 @@ export default function App() {
     </Routes>
   );
 }
-
