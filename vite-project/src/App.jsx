@@ -1,6 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 
-/* ===== PUBLIC ===== */
+/* =======================
+   PUBLIC
+======================= */
 import PublicLayout from "./Components/public/PublicLayout";
 import Hero from "./Components/Hero";
 import Courses from "./Components/Courses";
@@ -9,29 +11,38 @@ import Contact from "./Components/Contact";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
 import Cart from "./Components/Cart";
+
+/* =======================
+   PAYMENT
+======================= */
 import Payment from "./Components/Payment";
 import PaymentSuccess from "./Components/PaymentSuccess";
 
-/* ===== STUDENT ===== */
+/* =======================
+   STUDENT
+======================= */
 import StudentLayout from "./Components/students/StudentLayout";
 import Dashboard from "./Components/students/Dashboard";
 
-/* ===== ADMIN ===== */
+/* =======================
+   ADMIN
+======================= */
 import AdminLayout from "./Components/admin/AdminLayout";
 import AdminDashboard from "./Components/admin/AdminDashboard";
+import ManageCourses from "./Components/admin/ManageCourses";
+import Students from "./Components/admin/Students";
 
-/* ===== AUTH ===== */
+/* =======================
+   AUTH
+======================= */
 import ProtectedRoute from "./Components/auth/ProtectedRoute";
 
 export default function App() {
   return (
     <Routes>
-
-      {/* =========================
-          PUBLIC ROUTES (WITH NAVBAR)
-      ========================= */}
+      {/* ========== PUBLIC ROUTES ========== */}
       <Route element={<PublicLayout />}>
-        <Route path="/" element={<Hero />} />          {/* ✅ FIX */}
+        <Route path="/" element={<Hero />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/course/:id" element={<CourseDetails />} />
         <Route path="/contact" element={<Contact />} />
@@ -40,9 +51,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
       </Route>
 
-      {/* =========================
-          PAYMENT (PROTECTED)
-      ========================= */}
+      {/* ========== PAYMENT ROUTES ========== */}
       <Route
         path="/payment"
         element={
@@ -61,9 +70,7 @@ export default function App() {
         }
       />
 
-      {/* =========================
-          STUDENT PANEL
-      ========================= */}
+      {/* ========== STUDENT ROUTES ========== */}
       <Route
         path="/students"
         element={
@@ -75,9 +82,7 @@ export default function App() {
         <Route index element={<Dashboard />} />
       </Route>
 
-      {/* =========================
-          ADMIN PANEL
-      ========================= */}
+      {/* ========== ADMIN ROUTES ========== */}
       <Route
         path="/admin"
         element={
@@ -87,8 +92,9 @@ export default function App() {
         }
       >
         <Route index element={<AdminDashboard />} />
+        <Route path="courses" element={<ManageCourses />} />
+        <Route path="students" element={<Students />} />
       </Route>
-
     </Routes>
   );
 }
