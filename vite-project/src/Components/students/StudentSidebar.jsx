@@ -1,25 +1,25 @@
 import { NavLink } from "react-router-dom";
 
 const base =
-  "block px-4 py-3 rounded-xl text-sm font-medium transition border-2";
+  "block px-3 py-2 rounded-lg text-sm font-medium transition"; // 🔽 reduced padding
 
 const active =
-  "bg-white text-indigo-600 border-white shadow";
+  "bg-white text-purple-700";
 
 const inactive =
-  "text-white border-indigo-300 hover:bg-indigo-500 hover:shadow";
+  "text-purple-200 hover:bg-purple-700 hover:text-white";
 
 export default function StudentSidebar() {
   return (
     <aside
-      className="w-64"
+      className="w-56 border-r-2 border-white" // 🔽 width reduced (w-64 → w-56)
       style={{
-        minHeight: "calc(100vh - 100px)",
-        background: "linear-gradient(180deg, #5B21B6, #4F46E5)",
+        minHeight: "calc(100vh - 70px)",
+        background: "linear-gradient(180deg, #4338CA, #6D28D9)",
       }}
     >
-      <nav className="p-5 space-y-4">
-
+      <nav className="p-4 space-y-2"> {/* 🔽 reduced spacing (space-y-4 → space-y-2) */}
+        
         <NavLink
           to="/students"
           end
@@ -31,7 +31,7 @@ export default function StudentSidebar() {
         </NavLink>
 
         <NavLink
-          to="/students/courses"
+          to="/students/my-courses"
           className={({ isActive }) =>
             `${base} ${isActive ? active : inactive}`
           }

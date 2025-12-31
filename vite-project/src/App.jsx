@@ -1,8 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 
-/* =======================
-   PUBLIC
-======================= */
+/* PUBLIC */
 import PublicLayout from "./Components/public/PublicLayout";
 import Hero from "./Components/Hero";
 import Courses from "./Components/Courses";
@@ -12,35 +10,31 @@ import Login from "./Components/Login";
 import Register from "./Components/Register";
 import Cart from "./Components/Cart";
 
-/* =======================
-   PAYMENT
-======================= */
+/* PAYMENT */
 import Payment from "./Components/Payment";
 import PaymentSuccess from "./Components/PaymentSuccess";
 
-/* =======================
-   STUDENT
-======================= */
+/* STUDENT */
 import StudentLayout from "./Components/students/StudentLayout";
 import Dashboard from "./Components/students/Dashboard";
+import MyCourses from "./Components/students/MyCourses";
+import Progress from "./Components/students/Progress";
+import Certificates from "./Components/students/Certificates";
+import Internships from "./Components/students/Internships";
 
-/* =======================
-   ADMIN
-======================= */
+/* ADMIN */
 import AdminLayout from "./Components/admin/AdminLayout";
 import AdminDashboard from "./Components/admin/AdminDashboard";
 import ManageCourses from "./Components/admin/ManageCourses";
 import Students from "./Components/admin/Students";
 
-/* =======================
-   AUTH
-======================= */
+/* AUTH */
 import ProtectedRoute from "./Components/auth/ProtectedRoute";
 
 export default function App() {
   return (
     <Routes>
-      {/* ========== PUBLIC ROUTES ========== */}
+      {/* PUBLIC */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Hero />} />
         <Route path="/courses" element={<Courses />} />
@@ -51,7 +45,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
       </Route>
 
-      {/* ========== PAYMENT ROUTES ========== */}
+      {/* PAYMENT */}
       <Route
         path="/payment"
         element={
@@ -70,7 +64,7 @@ export default function App() {
         }
       />
 
-      {/* ========== STUDENT ROUTES ========== */}
+      {/* STUDENT */}
       <Route
         path="/students"
         element={
@@ -80,9 +74,13 @@ export default function App() {
         }
       >
         <Route index element={<Dashboard />} />
+        <Route path="my-courses" element={<MyCourses />} />
+        <Route path="progress" element={<Progress />} />
+        <Route path="certificates" element={<Certificates />} />
+        <Route path="internships" element={<Internships />} />
       </Route>
 
-      {/* ========== ADMIN ROUTES ========== */}
+      {/* ADMIN */}
       <Route
         path="/admin"
         element={

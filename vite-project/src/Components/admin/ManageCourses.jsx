@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 
-const STORAGE_KEY = "courses";
-
-const ManageCourses = () => {
+export default function ManageCourses() {
   const [courses, setCourses] = useState([]);
-  const [newCourse, setNewCourse] = useState({
-    id: "",
+  const [editingId, setEditingId] = useState(null);
+
+  const [form, setForm] = useState({
     title: "",
     description: "",
     price: "",
@@ -14,32 +13,91 @@ const ManageCourses = () => {
     duration: "",
   });
 
+  /* =========================
+     FETCH COURSES
+  ========================= */
+  const fetchCourses = async () => {
+    const res = await fetch("http://localhost:5001/api/courses");
+    const data = await res.json();
+    setCourses(data);
+  };
+
   useEffect(() => {
-    const storedCourses =
-      JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    setCourses(storedCourses);
+    fetchCourses();
   }, []);
 
-  const handleAddCourse = () => {
-    if (!newCourse.title || !newCourse.price) {
-      alert("Title and price are required");
+  /* =========================
+     ADD COURSE
+  ========================= */
+  const handleAdd = async () => {
+    if (!form.title || !form.price) {
+      alert("Title & price required");
       return;
     }
 
-    const course = {
-      ...newCourse,
-      id: Date.now().toString(),
-    };
+    await fetch("http://localhost:5001/api/courses", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("learnix_token")}`,
+      },
+      body: JSON.stringify(form),
+    });
 
-    const updatedCourses = [...courses, course];
-    setCourses(updatedCourses);
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(updatedCourses)
+    resetForm();
+    fetchCourses();
+  };
+
+  /* =========================
+     START EDIT
+  ========================= */
+  const startEdit = (course) => {
+    setEditingId(course.id);
+    setForm(course);
+  };
+
+  /* =========================
+     UPDATE COURSE
+  ========================= */
+  const handleUpdate = async () => {
+    await fetch(
+      `http://localhost:5001/api/courses/${editingId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("learnix_token")}`,
+        },
+        body: JSON.stringify(form),
+      }
     );
 
-    setNewCourse({
-      id: "",
+    resetForm();
+    fetchCourses();
+  };
+
+  /* =========================
+     DELETE COURSE
+  ========================= */
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this course?")) return;
+
+    await fetch(
+      `http://localhost:5001/api/courses/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("learnix_token")}`,
+        },
+      }
+    );
+
+    fetchCourses();
+  };
+
+  const resetForm = () => {
+    setEditingId(null);
+    setForm({
       title: "",
       description: "",
       price: "",
@@ -47,117 +105,108 @@ const ManageCourses = () => {
       instructor: "",
       duration: "",
     });
-
-    alert("Course added (temporary)");
-  };
-
-  const handleDeleteCourse = (id) => {
-    const updatedCourses = courses.filter(
-      (course) => course.id !== id
-    );
-    setCourses(updatedCourses);
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(updatedCourses)
-    );
   };
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">
-        Manage Courses (Frontend Only)
+        Manage Courses
       </h1>
 
-      {/* ADD COURSE */}
-      <div className="bg-white p-6 rounded-xl shadow border mb-8">
-        <h3 className="font-semibold mb-4">
-          Add New Course
-        </h3>
+      {/* =========================
+          ADD / EDIT FORM
+      ========================= */}
+      <div className="bg-white p-6 rounded-xl shadow mb-8">
+        <h2 className="font-semibold mb-4">
+          {editingId ? "Edit Course" : "Add Course"}
+        </h2>
 
-        <input className="border p-2 w-full mb-2 rounded"
-          placeholder="Title"
-          value={newCourse.title}
-          onChange={(e) =>
-            setNewCourse({ ...newCourse, title: e.target.value })
-          }
-        />
+        {[
+          ["title", "Title"],
+          ["description", "Description"],
+          ["price", "Price"],
+          ["image", "Image URL"],
+          ["instructor", "Instructor"],
+          ["duration", "Duration"],
+        ].map(([key, label]) => (
+          <input
+            key={key}
+            className="border p-2 w-full mb-3 rounded"
+            placeholder={label}
+            value={form[key]}
+            onChange={(e) =>
+              setForm({ ...form, [key]: e.target.value })
+            }
+          />
+        ))}
 
-        <input className="border p-2 w-full mb-2 rounded"
-          placeholder="Description"
-          value={newCourse.description}
-          onChange={(e) =>
-            setNewCourse({ ...newCourse, description: e.target.value })
-          }
-        />
-
-        <input className="border p-2 w-full mb-2 rounded"
-          placeholder="Price"
-          value={newCourse.price}
-          onChange={(e) =>
-            setNewCourse({ ...newCourse, price: e.target.value })
-          }
-        />
-
-        <input className="border p-2 w-full mb-2 rounded"
-          placeholder="Image URL"
-          value={newCourse.image}
-          onChange={(e) =>
-            setNewCourse({ ...newCourse, image: e.target.value })
-          }
-        />
-
-        <input className="border p-2 w-full mb-4 rounded"
-          placeholder="Instructor"
-          value={newCourse.instructor}
-          onChange={(e) =>
-            setNewCourse({ ...newCourse, instructor: e.target.value })
-          }
-        />
-
-        <button
-          onClick={handleAddCourse}
-          className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
-        >
-          Add Course
-        </button>
+        <div className="flex gap-3">
+          {editingId ? (
+            <>
+              <button
+                onClick={handleUpdate}
+                className="px-6 py-2 bg-green-600 text-white rounded"
+              >
+                Update
+              </button>
+              <button
+                onClick={resetForm}
+                className="px-6 py-2 bg-gray-400 text-white rounded"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={handleAdd}
+              className="px-6 py-2 bg-indigo-600 text-white rounded"
+            >
+              Add Course
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* COURSE LIST */}
-      <h3 className="font-semibold mb-4">
-        All Courses
-      </h3>
+      {/* =========================
+          COURSE LIST
+      ========================= */}
+      {courses.map((course) => (
+        <div
+          key={course.id}
+          className="bg-white border rounded-xl p-4 mb-4 shadow"
+        >
+          <h3 className="font-semibold text-lg">
+            {course.title}
+          </h3>
 
-      {courses.length === 0 ? (
-        <p>No courses added yet.</p>
-      ) : (
-        courses.map((course) => (
-          <div
-            key={course.id}
-            className="bg-white border rounded-xl p-4 mb-3 shadow-sm hover:shadow transition"
-          >
-            <h4 className="font-semibold">{course.title}</h4>
-            <p>{course.description}</p>
-            <p className="font-bold">₹{course.price}</p>
+          <p>{course.description}</p>
+          <p className="font-bold">₹{course.price}</p>
 
-            {course.image && (
-              <img
-                src={course.image}
-                alt={course.title}
-                className="w-40 mt-2 rounded"
-              />
-            )}
+          {course.image && (
+            <img
+              src={course.image}
+              alt={course.title}
+              className="w-40 mt-2 rounded"
+            />
+          )}
+
+          <div className="flex gap-4 mt-4">
+            <button
+              onClick={() => startEdit(course)}
+              className="text-blue-600 hover:underline"
+            >
+              Edit
+            </button>
 
             <button
-              onClick={() => handleDeleteCourse(course.id)}
-              className="mt-3 text-sm text-red-600 hover:underline"
+              onClick={() => handleDelete(course.id)}
+              className="text-red-600 hover:underline"
             >
               Delete
             </button>
           </div>
-        ))
-      )}
+        </div>
+      ))}
     </div>
   );
-};
-
-export default ManageCourses;
+}

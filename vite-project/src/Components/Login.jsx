@@ -1,13 +1,10 @@
 import { useState } from "react";
-import { useNavigate, useSearchParams, Link } from "react-router-dom";
-
-const ADMIN_EMAIL = "admin@learnix.com";
-const ADMIN_PASSWORD = "admin123";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const redirect = searchParams.get("redirect");
+  const [params] = useSearchParams();
+  const redirect = params.get("redirect");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,26 +15,6 @@ export default function Login() {
     setError("");
 
     try {
-      /* =========================
-         ADMIN LOGIN (FRONTEND RULE)
-      ========================= */
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        const adminUser = {
-          email: ADMIN_EMAIL,
-          name: "Admin",
-          isAdmin: true,
-        };
-
-        localStorage.setItem("learnix_token", "admin-token");
-        localStorage.setItem("learnix_user", JSON.stringify(adminUser));
-
-        navigate("/admin");
-        return;
-      }
-
-      /* =========================
-         STUDENT LOGIN (BACKEND)
-      ========================= */
       const res = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -45,17 +22,20 @@ export default function Login() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Login failed");
+      if (!res.ok) throw new Error(data.message);
 
-      const studentUser = {
-        ...data.user,
-        isAdmin: false,
-      };
-
+      // ✅ STORE AUTH
       localStorage.setItem("learnix_token", data.token);
-      localStorage.setItem("learnix_user", JSON.stringify(studentUser));
+      localStorage.setItem("learnix_user", JSON.stringify(data.user));
 
-      navigate(redirect || "/students");
+      // ✅ REDIRECT LOGIC (CRITICAL)
+      if (redirect) {
+        navigate(redirect);
+      } else if (data.user.isAdmin) {
+        navigate("/admin");
+      } else {
+        navigate("/students");
+      }
 
     } catch (err) {
       setError(err.message);
@@ -63,18 +43,13 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-700 to-indigo-700">
-      <form
-        onSubmit={handleLogin}
-        className="bg-white p-8 rounded-xl w-96 shadow-xl"
-      >
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-700 to-purple-700">
+      <form onSubmit={handleLogin} className="bg-white p-8 rounded-xl shadow w-96">
         <h2 className="text-2xl font-bold text-center mb-6 text-indigo-700">
           Login
         </h2>
 
-        {error && (
-          <p className="text-red-600 text-center mb-4">{error}</p>
-        )}
+        {error && <p className="text-red-600 text-center mb-4">{error}</p>}
 
         <input
           type="email"
@@ -94,19 +69,9 @@ export default function Login() {
           required
         />
 
-        <button
-          type="submit"
-          className="w-full bg-indigo-600 text-white py-3 rounded hover:bg-indigo-700 transition"
-        >
+        <button className="w-full bg-indigo-600 text-white py-3 rounded hover:bg-indigo-700">
           Login
         </button>
-
-        <p className="text-sm text-center mt-4">
-          Don’t have an account?{" "}
-          <Link to="/register" className="text-indigo-600 font-medium">
-            Register
-          </Link>
-        </p>
       </form>
     </div>
   );
