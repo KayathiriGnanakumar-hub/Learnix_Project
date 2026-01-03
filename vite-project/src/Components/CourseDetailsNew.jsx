@@ -11,6 +11,7 @@ export default function CourseDetails() {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedVideo, setSelectedVideo] = useState(null);
+  const [videoCompleted, setVideoCompleted] = useState(false);
 
   const fetchCourse = useCallback(async () => {
     try {
@@ -31,9 +32,6 @@ export default function CourseDetails() {
       );
       const data = await res.json();
       setVideos(data);
-      if (data.length > 0) {
-        setSelectedVideo(data[0]);
-      }
     } catch (err) {
       console.error("Error fetching videos:", err);
     }

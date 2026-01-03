@@ -48,7 +48,13 @@ export default function Courses() {
               >
                 <div className="h-36 mb-4 overflow-hidden rounded-xl">
                   <img
-                    src={course.image || "/placeholder.jpg"}
+                    src={
+                      course.image
+                        ? course.image.startsWith("http")
+                          ? course.image
+                          : `http://localhost:5001${course.image.startsWith("/") ? "" : "/"}${course.image}`
+                        : "/placeholder.jpg"
+                    }
                     alt={course.title}
                     className="w-full h-full object-cover"
                   />
