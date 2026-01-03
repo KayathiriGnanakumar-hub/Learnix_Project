@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
 
+/* DATABASE INITIALIZATION */
+import initializeDatabase from "./scripts/initializeDatabase.js";
+
 /* ROUTES */
 import authRoutes from "./routes/authRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
@@ -94,4 +97,7 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
+  
+  // Initialize database tables and triggers
+  initializeDatabase();
 });
