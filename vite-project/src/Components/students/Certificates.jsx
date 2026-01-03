@@ -1,31 +1,35 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Certificates() {
-  const [certs, setCerts] = useState([]);
+  const [completed, setCompleted] = useState([]);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      if (!user) return;
+    const token = localStorage.getItem("learnix_token");
 
-      const ref = collection(
-        db,
-        "users",
-        user.uid,
-        "enrolledCourses"
-      );
+    axios
+      .get("http://localhost:5001/api/enroll/my", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(async (res) => {
+        const done = [];
 
-      const snap = await getDocs(ref);
-      const completed = snap.docs
-        .map((d) => d.data())
-        .filter((c) => c.completed === true);
+        for (const c of res.data) {
+          const p = await axios.get(
+            `http://localhost:5001/api/progress/${c.id}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
 
-      setCerts(completed);
-    });
+          if (p.data.total > 0 && p.data.total === p.data.completed) {
+            done.push(c);
+          }
+        }
 
-    return () => unsub();
+        setCompleted(done);
+      });
   }, []);
 
-  if (certs.length === 0) {
+  if (completed.length === 0) {
     return <p>No certificates earned yet.</p>;
   }
 
@@ -35,15 +39,10 @@ export default function Certificates() {
         Certificates
       </h1>
 
-      {certs.map((c, i) => (
-        <div
-          key={i}
-          className="bg-white p-5 rounded-xl shadow mb-4"
-        >
-          <h3 className="font-semibold">
-            {c.title}
-          </h3>
-          <p className="text-sm text-gray-600">
+      {completed.map((c) => (
+        <div key={c.id} className="bg-white p-4 rounded-xl shadow mb-4">
+          <h3 className="font-semibold">{c.title}</h3>
+          <p className="text-sm text-gray-500">
             Certificate of Completion
           </p>
         </div>

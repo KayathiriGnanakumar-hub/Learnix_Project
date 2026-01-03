@@ -46,67 +46,30 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-700 via-indigo-700 to-purple-900">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <div className="min-h-[calc(100vh-80px)] bg-gray-50 flex justify-center px-4 pb-24">
+      <div className="w-full max-w-md mt-28 bg-white p-8 rounded-xl shadow-md animate-fadeUp">
         <h2 className="text-2xl font-bold text-center mb-6">
           Create Account
         </h2>
 
         {error && (
-          <p className="text-red-600 text-sm mb-4 text-center">{error}</p>
+          <p className="text-red-600 text-sm mb-4 text-center animate-fadeUp animate-delay-1">
+            {error}
+          </p>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            required
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded"
-          />
+          <input className="w-full px-4 py-3 border rounded-md animate-delay-1 animate-fadeUp" name="name" placeholder="Full Name" onChange={handleChange} required />
+          <input className="w-full px-4 py-3 border rounded-md animate-delay-2 animate-fadeUp" name="email" placeholder="Email" onChange={handleChange} required />
+          <input className="w-full px-4 py-3 border rounded-md animate-delay-3 animate-fadeUp" type="password" name="password" placeholder="Password" onChange={handleChange} required />
+          <input className="w-full px-4 py-3 border rounded-md animate-delay-4 animate-fadeUp" type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} required />
 
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded"
-          />
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded"
-          />
-
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            required
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded"
-          />
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-indigo-600 text-white py-2 rounded"
-          >
+          <button className="w-full bg-indigo-600 text-white py-3 rounded-md font-semibold transition hover:scale-[1.03] active:scale-95">
             {loading ? "Registering..." : "Register"}
           </button>
         </form>
 
-        <p className="text-sm text-center mt-4">
+        <p className="text-sm text-center mt-5">
           Already have an account?{" "}
           <Link to="/login" className="text-indigo-600 hover:underline">
             Login
@@ -116,23 +79,3 @@ export default function Register() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
