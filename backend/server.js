@@ -13,6 +13,7 @@ import adminVideoRoutes from "./routes/adminVideoRoutes.js";
 import adminQuizRoutes from "./routes/adminQuizRoutes.js";
 import progressRoutes from "./routes/progressRoutes.js";
 import videoRoutes from "./routes/videoRoutes.js";
+import certificateRoutes from "./routes/certificateRoutes.js";
 
 
 dotenv.config();
@@ -79,6 +80,9 @@ app.use("/api/admin/quizzes", adminQuizRoutes);
 
 /* STUDENT PROGRESS */
 app.use("/api/progress", progressRoutes);
+
+/* CERTIFICATES */
+app.use("/api/certificates", certificateRoutes);
 
 app.get("/", (req, res) => {
   res.send("✅ Backend running");
