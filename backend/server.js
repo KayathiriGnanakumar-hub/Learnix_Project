@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
 
+/* DATABASE INITIALIZATION */
+import initializeDatabase from "./scripts/initializeDatabase.js";
+
 /* ROUTES */
 import authRoutes from "./routes/authRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
@@ -13,6 +16,7 @@ import adminVideoRoutes from "./routes/adminVideoRoutes.js";
 import adminQuizRoutes from "./routes/adminQuizRoutes.js";
 import progressRoutes from "./routes/progressRoutes.js";
 import videoRoutes from "./routes/videoRoutes.js";
+import certificateRoutes from "./routes/certificateRoutes.js";
 
 
 dotenv.config();
@@ -80,6 +84,9 @@ app.use("/api/admin/quizzes", adminQuizRoutes);
 /* STUDENT PROGRESS */
 app.use("/api/progress", progressRoutes);
 
+/* CERTIFICATES */
+app.use("/api/certificates", certificateRoutes);
+
 app.get("/", (req, res) => {
   res.send("✅ Backend running");
 });
@@ -90,4 +97,7 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
+  
+  // Initialize database tables and triggers
+  initializeDatabase();
 });

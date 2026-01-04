@@ -6,10 +6,10 @@ dotenv.config();
 // Usage:
 // node scripts/seed_multiple_quizzes.js <videoIds> <countPerVideo>
 // <videoIds> can be a single id or comma-separated ids (e.g. 1 or 1,2,3)
-// <countPerVideo> is how many quiz rows to create per video (default 3)
+// <countPerVideo> is how many quiz rows to create per video (default 10)
 
 const argIds = process.argv[2];
-const argCount = process.argv[3] || "3";
+const argCount = process.argv[3] || "10";
 
 if (!argIds) {
   console.log("Usage: node scripts/seed_multiple_quizzes.js <videoIds> <countPerVideo>");

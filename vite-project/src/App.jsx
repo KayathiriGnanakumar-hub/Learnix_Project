@@ -18,6 +18,8 @@ import Dashboard from "./Components/students/Dashboard";
 import MyCourses from "./Components/students/MyCourses";
 import Progress from "./Components/students/Progress";
 import Quiz from "./Components/students/Quiz";
+import Certificates from "./Components/students/Certificates";
+import Internships from "./Components/students/internships";
 
 /* ADMIN */
 import AdminLayout from "./Components/admin/AdminLayout";
@@ -70,6 +72,8 @@ export default function App() {
         <Route index element={<Dashboard />} />
         <Route path="my-courses" element={<MyCourses />} />
         <Route path="progress" element={<Progress />} />
+        <Route path="certificates" element={<Certificates />} />
+        <Route path="internships" element={<Internships />} />
       </Route>
 
       {/* QUIZ - Protected Route */}

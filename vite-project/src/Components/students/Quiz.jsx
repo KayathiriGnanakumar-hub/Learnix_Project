@@ -24,7 +24,7 @@ export default function Quiz() {
       .get(`http://localhost:5001/api/admin/quizzes/video/${videoId}`)
       .then((res) => {
         const quizList = Array.isArray(res.data) ? res.data : [res.data];
-        setQuizzes(quizList.slice(0, 10)); // Limit to 10 questions
+        setQuizzes(quizList); // Show ALL questions
         setLoading(false);
         setAnswers({});
       })
