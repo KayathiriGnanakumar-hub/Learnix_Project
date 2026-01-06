@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 
 export default function Quiz() {
@@ -18,13 +18,118 @@ export default function Quiz() {
   const [quizStarted, setQuizStarted] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
 
+  // Helper function to get course ID from localStorage or context
+  const getCurrentCourseId = () => {
+    // Try to get from URL params or localStorage
+    const params = new URLSearchParams(window.location.search);
+    const courseIdFromURL = params.get("courseId");
+    if (courseIdFromURL) return parseInt(courseIdFromURL);
+    
+    // Fallback to localStorage
+    const courseFromStorage = localStorage.getItem("learnix_currentCourse");
+    return courseFromStorage ? parseInt(courseFromStorage) : 1;
+  };
+
+  // Define handleSubmitQuiz BEFORE it's used in useEffect
+  const handleSubmitQuiz = useCallback(async () => {
+    // Calculate correct answers
+    let correct = 0;
+    quizzes.forEach((quiz, idx) => {
+      const userAnswer = answers[idx]?.trim() || "";
+      let isCorrect = false;
+
+      // Map correct_option label to actual option text (handle both formats: "Option A" and "a")
+      const correctOpt = quiz.correct_option?.toLowerCase().trim() || "";
+      
+      console.log(`Q${idx + 1} - User: "${userAnswer}", Correct opt: "${correctOpt}"`); // DEBUG
+      console.log(`  option_a: "${quiz.option_a?.trim()}"`); // DEBUG
+      console.log(`  option_b: "${quiz.option_b?.trim()}"`); // DEBUG
+      console.log(`  option_c: "${quiz.option_c?.trim()}"`); // DEBUG
+      console.log(`  option_d: "${quiz.option_d?.trim()}"`); // DEBUG
+      
+      if (correctOpt === "option a" || correctOpt === "a") {
+        isCorrect = userAnswer === (quiz.option_a?.trim() || "");
+      } else if (correctOpt === "option b" || correctOpt === "b") {
+        isCorrect = userAnswer === (quiz.option_b?.trim() || "");
+      } else if (correctOpt === "option c" || correctOpt === "c") {
+        isCorrect = userAnswer === (quiz.option_c?.trim() || "");
+      } else if (correctOpt === "option d" || correctOpt === "d") {
+        isCorrect = userAnswer === (quiz.option_d?.trim() || "");
+      }
+
+      console.log(`  Result: ${isCorrect ? "✅ CORRECT" : "❌ WRONG"}`); // DEBUG
+
+      if (isCorrect) {
+        correct++;
+      }
+    });
+
+    setCorrectCount(correct);
+    setSubmitted(true);
+    setShowResults(true);
+
+    // Calculate pass percentage
+    const passPercentage = (correct / quizzes.length) * 100;
+    const passed = passPercentage >= 70;
+
+    // Save quiz result to backend
+    try {
+      const response = await axios.post(
+        "http://localhost:5001/api/quiz-results/save",
+        { 
+          videoId, 
+          courseId: getCurrentCourseId(),
+          score: correct,
+          totalQuestions: quizzes.length
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log("✅ Quiz result saved:", response.data);
+    } catch (err) {
+      console.error("❌ Error saving quiz result:", err);
+    }
+
+    // Update progress if passed (>= 70%)
+    if (passed) {
+      try {
+        await axios.post(
+          "http://localhost:5001/api/progress/complete",
+          { videoId },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        console.log("✅ Quiz passed! Progress updated");
+      } catch (err) {
+        console.error("Progress update error:", err);
+      }
+    }
+  }, [quizzes, answers, videoId, token]);
+
   // Fetch all quizzes for this video
   useEffect(() => {
     axios
       .get(`http://localhost:5001/api/admin/quizzes/video/${videoId}`)
       .then((res) => {
         const quizList = Array.isArray(res.data) ? res.data : [res.data];
-        setQuizzes(quizList); // Show ALL questions
+        console.log("📝 Fetched quizzes:", quizList);
+        
+        // Log detailed info about each quiz
+        quizList.forEach((q, idx) => {
+          console.log(`Q${idx + 1}:`, {
+            id: q.id,
+            question: q.question,
+            option_a: q.option_a,
+            option_b: q.option_b,
+            option_c: q.option_c,
+            option_d: q.option_d,
+            correct_option: q.correct_option
+          });
+        });
+        
+        setQuizzes(quizList);
         setLoading(false);
         setAnswers({});
       })
@@ -34,6 +139,7 @@ export default function Quiz() {
         axios
           .get(`http://localhost:5001/api/admin/quizzes/${videoId}`)
           .then((res) => {
+            console.log("📝 Fetched single quiz:", res.data); // DEBUG
             setQuizzes([res.data]);
             setLoading(false);
           })
@@ -58,7 +164,7 @@ export default function Quiz() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [quizStarted, submitted]);
+  }, [quizStarted, submitted, handleSubmitQuiz, timeLeft]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -67,8 +173,20 @@ export default function Quiz() {
   };
 
   const currentQuestion = quizzes[currentQuestionIndex];
-  const isAnswered = answers[currentQuestionIndex] !== undefined;
-  const answerKey = currentQuestion?.correct_option;
+  
+  // Map correct_option to actual option text for display
+  let answerKey = "";
+  const correctOpt = currentQuestion?.correct_option?.toLowerCase().trim() || "";
+  
+  if (correctOpt === "option a" || correctOpt === "a") {
+    answerKey = currentQuestion?.option_a?.trim() || "";
+  } else if (correctOpt === "option b" || correctOpt === "b") {
+    answerKey = currentQuestion?.option_b?.trim() || "";
+  } else if (correctOpt === "option c" || correctOpt === "c") {
+    answerKey = currentQuestion?.option_c?.trim() || "";
+  } else if (correctOpt === "option d" || correctOpt === "d") {
+    answerKey = currentQuestion?.option_d?.trim() || "";
+  }
 
   const handleAnswerChange = (option) => {
     setAnswers({
@@ -86,37 +204,6 @@ export default function Quiz() {
   const handlePrev = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
-    }
-  };
-
-  const handleSubmitQuiz = async () => {
-    // Calculate correct answers
-    let correct = 0;
-    quizzes.forEach((quiz, idx) => {
-      if (answers[idx] === quiz.correct_option) {
-        correct++;
-      }
-    });
-
-    setCorrectCount(correct);
-    setSubmitted(true);
-    setShowResults(true);
-
-    // Update progress if passed (>= 70%)
-    const passPercentage = (correct / quizzes.length) * 100;
-    if (passPercentage >= 70) {
-      try {
-        await axios.post(
-          "http://localhost:5001/api/progress/complete",
-          { videoId },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        console.log("✅ Quiz passed! Progress updated");
-      } catch (err) {
-        console.error("Progress update error:", err);
-      }
     }
   };
 
@@ -143,7 +230,7 @@ export default function Quiz() {
     const passed = passPercentage >= 70;
 
     return (
-      <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white pt-28 pb-12 px-4">
+      <div className="min-h-screen bg-linear-to-b from-teal-50 to-white pt-28 pb-12 px-4">
         <div className="max-w-2xl mx-auto">
           <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
             {passed ? (
@@ -174,8 +261,23 @@ export default function Quiz() {
             <div className="mb-8 text-left max-h-64 overflow-y-auto bg-slate-50 rounded-lg p-4">
               <h3 className="font-bold text-lg mb-4 text-gray-900">Detailed Results:</h3>
               {quizzes.map((quiz, idx) => {
-                const userAnswer = answers[idx];
-                const isCorrect = userAnswer === quiz.correct_option;
+                const userAnswer = answers[idx]?.trim() || "";
+                let correctAnswer = "";
+                
+                // Map correct_option label to actual option text (handle both formats: "Option A" and "a")
+                const correctOpt = quiz.correct_option?.toLowerCase().trim() || "";
+                
+                if (correctOpt === "option a" || correctOpt === "a") {
+                  correctAnswer = quiz.option_a?.trim() || "";
+                } else if (correctOpt === "option b" || correctOpt === "b") {
+                  correctAnswer = quiz.option_b?.trim() || "";
+                } else if (correctOpt === "option c" || correctOpt === "c") {
+                  correctAnswer = quiz.option_c?.trim() || "";
+                } else if (correctOpt === "option d" || correctOpt === "d") {
+                  correctAnswer = quiz.option_d?.trim() || "";
+                }
+                
+                const isCorrect = userAnswer === correctAnswer;
                 return (
                   <div key={idx} className="mb-4 p-3 border border-gray-200 rounded-lg">
                     <p className="font-semibold text-gray-900 mb-2">Q{idx + 1}: {quiz.question}</p>
@@ -184,7 +286,7 @@ export default function Quiz() {
                     </p>
                     {!isCorrect && (
                       <p className="text-sm text-green-600">
-                        Correct answer: {quiz.correct_option}
+                        Correct answer: {correctAnswer}
                       </p>
                     )}
                   </div>
@@ -224,7 +326,7 @@ export default function Quiz() {
 
   // Quiz View
   return (
-    <div className="min-h-screen bg-gradient-to-b from-teal-50 to-white pt-28 pb-12 px-4">
+    <div className="min-h-screen bg-linear-to-b from-teal-50 to-white pt-28 pb-12 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -311,12 +413,13 @@ export default function Quiz() {
                       <input
                         type="radio"
                         name="answer"
-                        value={option}
+                        value={option || ""}
+                        checked={answers[currentQuestionIndex] === option}
                         onChange={() => handleAnswerChange(option)}
                         disabled={submitted}
                         className="w-4 h-4 text-teal-600 cursor-pointer"
                       />
-                      <span className="ml-4 text-gray-900 font-medium flex-1">{option}</span>
+                      <span className="ml-4 text-gray-900 font-medium flex-1">{option || "(No option)"}</span>
                       {submitted && option === answerKey && (
                         <span className="ml-4 text-green-600 font-bold">✓</span>
                       )}
@@ -372,7 +475,7 @@ export default function Quiz() {
               {currentQuestionIndex === quizzes.length - 1 && (
                 <button
                   onClick={handleSubmitQuiz}
-                  className="w-full mt-8 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-bold py-3 px-6 rounded-lg transition-all shadow-lg"
+                  className="w-full mt-8 bg-linear-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white font-bold py-3 px-6 rounded-lg transition-all shadow-lg"
                 >
                   Submit Quiz
                 </button>

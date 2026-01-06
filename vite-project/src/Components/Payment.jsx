@@ -17,7 +17,7 @@ export default function Payment() {
 
   if (cart.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-linear-to-b from-gray-50 to-white flex items-center justify-center px-4">
         <div className="max-w-md text-center">
           <div className="text-6xl mb-4">🛒</div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Cart is Empty</h2>
@@ -38,7 +38,7 @@ export default function Payment() {
   const total = cart.reduce((sum, course) => sum + parseFloat(course.price || 0), 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white pt-32 pb-12 px-4">
+    <div className="min-h-screen bg-linear-to-b from-gray-50 to-white pt-32 pb-12 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -69,7 +69,7 @@ export default function Payment() {
           </div>
 
           {/* Total */}
-          <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg p-6 mb-8">
+          <div className="bg-linear-to-r from-indigo-50 to-blue-50 rounded-lg p-6 mb-8">
             <div className="flex justify-between items-center">
               <span className="text-lg font-semibold text-gray-900">Total Amount:</span>
               <span className="text-3xl font-bold text-indigo-600">
@@ -90,7 +90,7 @@ export default function Payment() {
             onClick={() => {
               navigate("/payment-success");
             }}
-            className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl mb-4"
+            className="w-full bg-linear-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl mb-4"
           >
             Pay Now ${total.toFixed(2)}
           </button>

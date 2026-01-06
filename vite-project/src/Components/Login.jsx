@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [params] = useSearchParams();
   const redirect = params.get("redirect");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const res = await fetch("http://localhost:5001/api/auth/login", {
@@ -24,57 +28,67 @@ export default function Login() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      localStorage.setItem("learnix_token", data.token);
-      localStorage.setItem("learnix_user", JSON.stringify(data.user));
+      login(data.user, data.user, data.token);
 
-      // ✅ ALWAYS GO BACK TO REDIRECT PAGE
-      if (redirect) {
-        navigate(redirect);
-      } else if (data.user.isAdmin) {
-        navigate("/admin");
-      } else {
-        navigate("/students");
-      }
+      if (redirect) navigate(redirect);
+      else if (data.user.isAdmin) navigate("/admin");
+      else navigate("/students");
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-gray-50 flex justify-center px-4 pb-24">
-      <div className="w-full max-w-md mt-28 bg-white p-8 rounded-xl shadow-md">
-        <h2 className="text-2xl font-bold text-center mb-6 text-gray-900">
-          Login
-        </h2>
+    <div style={{ backgroundColor: '#FAF7E5' }} className="min-h-[calc(100vh-80px)] flex items-start justify-center py-20 px-4">
+      <div className="max-w-xl w-full mx-auto px-4">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-extrabold text-gray-900">Welcome back</h1>
+          <p className="text-gray-600 mt-2">Sign in to access your courses and dashboard</p>
+        </div>
 
-        {error && (
-          <p className="text-red-600 text-center mb-4">
-            {error}
+        <div className="bg-white rounded-2xl shadow-lg p-8 md:p-10">
+          {error && (
+            <p className="text-red-600 text-center mb-4 bg-red-50 p-3 rounded">
+              {error}
+            </p>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <input
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-200 outline-none"
+              placeholder="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+            />
+
+            <input
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-200 outline-none"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+            />
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition"
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
+
+          <p className="text-center text-gray-600 mt-4 text-sm">
+            Don't have an account? <a href="/register" className="text-orange-600 font-semibold hover:underline">Register</a>
           </p>
-        )}
-
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            className="w-full px-4 py-3 border rounded-md"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-          <input
-            className="w-full px-4 py-3 border rounded-md"
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-
-          <button className="w-full bg-indigo-600 text-white py-3 rounded-md font-semibold hover:bg-indigo-700">
-            Login
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );

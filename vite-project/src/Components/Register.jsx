@@ -46,35 +46,38 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-80px)] bg-gray-50 flex justify-center px-4 pb-24">
-      <div className="w-full max-w-md mt-28 bg-white p-8 rounded-xl shadow-md animate-fadeUp">
-        <h2 className="text-2xl font-bold text-center mb-6">
-          Create Account
-        </h2>
+    <div style={{ backgroundColor: '#FAF7E5' }} className="min-h-[calc(100vh-80px)] flex items-start justify-center py-20 px-4">
+      <div className="max-w-xl w-full mx-auto px-4">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-extrabold text-gray-900">Create your account</h1>
+          <p className="text-gray-600 mt-2">Join E-LearnHub and start learning today</p>
+        </div>
 
-        {error && (
-          <p className="text-red-600 text-sm mb-4 text-center animate-fadeUp animate-delay-1">
-            {error}
+        <div className="bg-white rounded-2xl shadow-lg p-8 md:p-10">
+          {error && (
+            <p className="text-red-600 text-sm mb-4 text-center">
+              {error}
+            </p>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm" name="name" placeholder="Full Name" onChange={handleChange} required />
+            <input className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm" name="email" placeholder="Email" onChange={handleChange} required />
+            <input className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm" type="password" name="password" placeholder="Password" onChange={handleChange} required />
+            <input className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm" type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} required />
+
+            <button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-semibold transition hover:shadow-lg">
+              {loading ? "Registering..." : "Register"}
+            </button>
+          </form>
+
+          <p className="text-sm text-center mt-5">
+            Already have an account?{" "}
+            <Link to="/login" className="text-orange-600 hover:underline">
+              Login
+            </Link>
           </p>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input className="w-full px-4 py-3 border rounded-md animate-delay-1 animate-fadeUp" name="name" placeholder="Full Name" onChange={handleChange} required />
-          <input className="w-full px-4 py-3 border rounded-md animate-delay-2 animate-fadeUp" name="email" placeholder="Email" onChange={handleChange} required />
-          <input className="w-full px-4 py-3 border rounded-md animate-delay-3 animate-fadeUp" type="password" name="password" placeholder="Password" onChange={handleChange} required />
-          <input className="w-full px-4 py-3 border rounded-md animate-delay-4 animate-fadeUp" type="password" name="confirmPassword" placeholder="Confirm Password" onChange={handleChange} required />
-
-          <button className="w-full bg-indigo-600 text-white py-3 rounded-md font-semibold transition hover:scale-[1.03] active:scale-95">
-            {loading ? "Registering..." : "Register"}
-          </button>
-        </form>
-
-        <p className="text-sm text-center mt-5">
-          Already have an account?{" "}
-          <Link to="/login" className="text-indigo-600 hover:underline">
-            Login
-          </Link>
-        </p>
+        </div>
       </div>
     </div>
   );

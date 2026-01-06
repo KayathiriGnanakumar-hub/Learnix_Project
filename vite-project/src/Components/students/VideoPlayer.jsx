@@ -10,7 +10,13 @@ export default function VideoPlayer() {
   useEffect(() => {
     axios
       .get(`http://localhost:5001/api/videos/${videoId}`)
-      .then((res) => setVideo(res.data));
+      .then((res) => {
+        setVideo(res.data);
+        // Store current course ID for quiz
+        if (res.data.course_id) {
+          localStorage.setItem("learnix_currentCourse", res.data.course_id);
+        }
+      });
   }, [videoId]);
 
   const getYouTubeId = (url) => {
@@ -38,7 +44,7 @@ export default function VideoPlayer() {
 
       <div className="mt-6 text-center">
         <button
-          onClick={() => navigate(`/quiz/${videoId}`)}
+          onClick={() => navigate(`/quiz/${videoId}?courseId=${video.course_id}`)}
           className="bg-indigo-600 text-white px-6 py-2 rounded-lg"
         >
           Take Quiz

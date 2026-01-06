@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { IoLogOut } from "react-icons/io5";
 
 export default function StudentHeader() {
   const navigate = useNavigate();
@@ -11,38 +12,33 @@ export default function StudentHeader() {
   };
 
   return (
-    <header
-      className="w-full flex items-center justify-between px-6
-      border-b-2 border-white"
-      style={{
-        height: "70px",
-        background: "linear-gradient(90deg, #4F46E5, #7C3AED)", // indigo → purple
-      }}
-    >
-      {/* LEFT */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white">
-          <img src="/logo.png" alt="Learnix" className="h-6" />
-          <span className="text-lg font-bold text-purple-700">
-            Learnix
-          </span>
-        </div>
-      </div>
-
-      {/* RIGHT */}
-      <div className="flex items-center gap-4">
-        <div className="w-9 h-9 rounded-full bg-white text-purple-700
-          font-bold flex items-center justify-center">
-          {firstLetter}
+    <header className="w-full sticky top-0 z-40" style={{ background: 'linear-gradient(90deg, var(--footer-start), var(--footer-end))' }}>
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-6">
+          <div className="hidden sm:block">
+            <input placeholder="Search courses..." className="px-4 py-2 rounded-full border border-white/20 bg-white/10 text-white placeholder-white/70 outline-none w-80 focus:ring-2 focus:ring-white/50 transition" />
+          </div>
         </div>
 
-        <button
-          onClick={logout}
-          className="px-4 py-1.5 rounded-md bg-white
-          text-purple-700 text-sm font-medium hover:bg-purple-100 transition"
-        >
-          Logout
-        </button>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-white text-indigo-700 font-bold flex items-center justify-center text-sm">
+              {firstLetter}
+            </div>
+            <div className="text-white text-sm">
+              <div className="font-semibold">{user?.name || 'Student'}</div>
+              <div className="text-white/80 text-xs">{user?.email || 'student'}</div>
+            </div>
+          </div>
+
+          <button
+            onClick={logout}
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold hover:opacity-95 transition flex items-center gap-2"
+          >
+            <IoLogOut className="w-4 h-4" />
+            Logout
+          </button>
+        </div>
       </div>
     </header>
   );

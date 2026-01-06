@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Template Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .certificate {
+            width: 900px;
+            height: 600px;
+            background: linear-gradient(135deg, #ffffff 0%, #f5f7ff 100%);
+            border: 8px solid #d4af37;
+            border-radius: 15px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .certificate::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .certificate::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -50%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(118, 75, 162, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .company-name {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title {
+            font-size: 42px;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin: 20px 0;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        .recipient-section {
+            margin: 30px 0;
+        }
+
+        .recipient-label {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .recipient-name {
+            font-size: 36px;
+            color: #1a1a1a;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #d4af37;
+            padding-bottom: 10px;
+        }
+
+        .course-section {
+            margin: 20px 0;
+        }
+
+        .course-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .course-name {
+            font-size: 24px;
+            color: #1a1a1a;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .footer-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 40px;
+            position: relative;
+        }
+
+        .signature-line {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 200px;
+        }
+
+        .signature-box {
+            width: 180px;
+            height: 80px;
+            border-top: 2px solid #1a1a1a;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 5px;
+        }
+
+        .signature-name {
+            font-size: 12px;
+            color: #1a1a1a;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .date-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .date-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .date-value {
+            font-size: 14px;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .seal {
+            width: 120px;
+            height: 120px;
+            border: 3px solid #d4af37;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #d4af37;
+            font-weight: bold;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .seal-star {
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 80px;
+            color: rgba(212, 175, 55, 0.1);
+            font-weight: bold;
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate">
+        <div class="watermark">CERTIFICATE</div>
+        <div class="content">
+            <div class="header">
+                <div class="logo">L</div>
+                <div class="company-name">Learnix Academy</div>
+            </div>
+
+            <div>
+                <div class="title">Certificate of Achievement</div>
+                <div class="subtitle">This is to certify that</div>
+
+                <div class="recipient-section">
+                    <div class="recipient-label">Recipient Name</div>
+                    <div class="recipient-name">John Doe</div>
+                </div>
+
+                <div class="course-section">
+                    <div class="course-label">has successfully completed the course</div>
+                    <div class="course-name">Web Development with React</div>
+                </div>
+
+                <p style="color: #666; font-size: 14px; margin-top: 20px;">
+                    With honors and recognition for outstanding achievement and commitment to learning excellence.
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <div class="signature-line">
+                    <div class="signature-box"></div>
+                    <div class="signature-name">Director</div>
+                    <div style="font-size: 12px; color: #666; margin-top: 5px;">Learnix Academy</div>
+                </div>
+
+                <div class="date-section">
+                    <div class="date-label">Date of Completion</div>
+                    <div class="date-value">January 4, 2026</div>
+                </div>
+
+                <div class="seal">
+                    <div class="seal-star">★</div>
+                    <div>VERIFIED</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

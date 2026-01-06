@@ -3,23 +3,18 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
+// Use a connection pool to better handle transient DB availability and avoid
+// assigning a connection object that can be in a closed state.
+const pool = mysql.createPool({
+  host: process.env.DB_HOST || "127.0.0.1",
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  multipleStatements: true, // Enable multiple SQL statements in one query
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  multipleStatements: true,
 });
 
-/* =========================
-   CONNECT DB
-========================= */
-db.connect((err) => {
-  if (err) {
-    console.error("❌ MySQL connection failed:", err.message);
-    return;
-  }
-  console.log("✅ MySQL connected");
-});
-
-export default db;
+// Export the pool which provides `.query(...)` compatible API used across the codebase.
+export default pool;
