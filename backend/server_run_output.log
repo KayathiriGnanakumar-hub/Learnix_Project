@@ -1,0 +1,9 @@
+G£à Server running on port 5001
+G£à DB reachable, proceeding with initialization
+G£à Enrollments tables initialized
+Gä¦n+Å admin_message column may already exist or could not be added: ER_DUP_FIELDNAME
+G£à Video quiz tables initialized
+G£à Enrollments table migrated (or already up-to-date)
+G£à Admins table initialized or already exists
+G£à Internship tables initialized
+

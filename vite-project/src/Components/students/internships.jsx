@@ -21,6 +21,7 @@ export default function Internships() {
       // Fetch all internships
       const internshipsRes = await axios.get("http://localhost:5001/api/internships");
       setInternships(internshipsRes.data);
+      console.log("✅ Internships fetched:", internshipsRes.data.length, "records");
 
       // Fetch eligibility
       if (token) {
@@ -29,6 +30,7 @@ export default function Internships() {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setEligibility(eligRes.data);
+        console.log("✅ Eligibility checked:", eligRes.data);
 
         // Fetch user's applications
         const appRes = await axios.get(
@@ -36,9 +38,14 @@ export default function Internships() {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setUserApplications(appRes.data);
+        console.log("✅ User applications fetched:", appRes.data.length, "records");
+        console.log("Applications data:", JSON.stringify(appRes.data, null, 2));
       }
     } catch (err) {
-      console.error("Error fetching internships:", err);
+      console.error("❌ Error fetching internships:", err);
+      if (err.response) {
+        console.error("Server response:", err.response.data);
+      }
     } finally {
       setLoading(false);
     }
@@ -131,9 +138,9 @@ export default function Internships() {
                 <h3 className="text-2xl font-bold">Fast-Track Internship Offer</h3>
                 <p className="mt-1 text-orange-100">You've completed {eligibility.completedCourses} courses — claim an exclusive internship fast-track match curated for active learners.</p>
                 <div className="mt-4">
-                  <button onClick={() => setSelectedInternship('fasttrack')} className="bg-white text-orange-600 font-bold py-2 px-4 rounded">
-                    Claim Offer
-                  </button>
+                    <button onClick={() => setSelectedInternship('fasttrack')} className="bg-white text-orange-600 font-bold py-2 px-4 rounded">
+                      Claim Offer
+                    </button>
                 </div>
               </div>
             </div>
@@ -215,74 +222,66 @@ export default function Internships() {
                 key={internship.id}
                 className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all border border-gray-200 overflow-hidden"
               >
-                {/* Header */}
                 <div className="bg-gradient-to-r from-indigo-600 to-blue-600 p-6 text-white">
-                  <h3 className="text-2xl font-bold mb-2">{internship.title}</h3>
+                  <h3 className="text-2xl font-bold mb-1">{internship.title}</h3>
                   <p className="text-indigo-100 text-lg font-semibold">{internship.company}</p>
                 </div>
 
-                {/* Content */}
-                <div className="p-6">
-                  {/* Job Details */}
-                  <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="p-6 space-y-3">
+                  <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-gray-600 text-sm">📍 Location</p>
                       <p className="font-semibold text-gray-900">{internship.location}</p>
                     </div>
-                    <div>
+                    <div className="text-right">
                       <p className="text-gray-600 text-sm">💼 Type</p>
                       <p className="font-semibold text-gray-900">{internship.job_type}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600 text-sm">💰 Stipend</p>
+                      <p className="text-gray-600 text-sm mt-2">💰 Stipend</p>
                       <p className="font-semibold text-gray-900">₹{internship.stipend?.toLocaleString() || 'Varies'}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600 text-sm">⏱️ Duration</p>
-                      <p className="font-semibold text-gray-900">{internship.duration_months} months</p>
                     </div>
                   </div>
 
-                  {/* Description */}
+                  <div>
+                    <p className="text-gray-600 text-sm">⏱️ Duration</p>
+                    <p className="font-semibold text-gray-900">{internship.duration_months} months</p>
+                  </div>
+
                   {internship.description && (
-                    <div className="mb-4">
+                    <div>
                       <p className="text-gray-600 text-sm font-semibold mb-2">Description</p>
                       <p className="text-gray-700 line-clamp-3">{internship.description}</p>
                     </div>
                   )}
 
-                  {/* Requirements */}
                   {internship.requirements && (
-                    <div className="mb-4">
+                    <div>
                       <p className="text-gray-600 text-sm font-semibold mb-2">Requirements</p>
                       <p className="text-gray-700 line-clamp-2">{internship.requirements}</p>
                     </div>
                   )}
 
-                  {/* Deadline */}
-                  <p className="text-gray-600 text-sm mb-4">
+                  <p className="text-gray-600 text-sm">
                     📅 Deadline: {new Date(internship.deadline).toLocaleDateString()}
                   </p>
 
-                  {/* Status & Action */}
-                  {applied ? (
-                    <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
-                      <p className="text-blue-700 font-semibold">
-                        ✓ Already Applied ({status?.toUpperCase()})
-                      </p>
-                    </div>
-                  ) : !eligibility?.isEligible ? (
-                    <button disabled className="w-full bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-lg cursor-not-allowed">
-                      Not Eligible Yet
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setSelectedInternship(internship.id)}
-                      className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all"
-                    >
-                      Apply Now
-                    </button>
-                  )}
+                  <div>
+                    {applied ? (
+                      <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
+                        <p className="text-blue-700 font-semibold">✓ Already Applied ({status?.toUpperCase()})</p>
+                      </div>
+                    ) : !eligibility?.isEligible ? (
+                      <button disabled className="w-full bg-gray-400 text-gray-700 font-bold py-2 px-4 rounded-lg cursor-not-allowed">
+                        Not Eligible Yet
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setSelectedInternship(internship.id)}
+                        className="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all"
+                      >
+                        Apply Now
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             );
@@ -318,7 +317,25 @@ export default function Internships() {
                       Cancel
                     </button>
                     <button
-                      onClick={() => { alert('Thank you — our team will contact you to arrange the fast-track internship.'); setSelectedInternship(null); setCoverLetter(''); }}
+                      onClick={async () => {
+                        if (!localStorage.getItem('learnix_token')) { alert('Please login to claim the offer'); return; }
+                        if (!coverLetter.trim()) { alert('Please write a message'); return; }
+                        try {
+                          const token = localStorage.getItem('learnix_token');
+                          const res = await fetch('http://localhost:5001/api/internships/apply', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                            body: JSON.stringify({ fasttrack: true, coverLetter })
+                          });
+                          if (!res.ok) throw new Error((await res.json()).message || 'Failed');
+                          alert('✅ Fast-track claim submitted. Our team will contact you.');
+                          setSelectedInternship(null);
+                          setCoverLetter('');
+                          fetchData();
+                        } catch (err) {
+                          alert('❌ ' + (err.message || 'Failed to submit claim'));
+                        }
+                      }}
                       className="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold py-2 px-4 rounded-lg transition-all"
                     >
                       Claim Offer

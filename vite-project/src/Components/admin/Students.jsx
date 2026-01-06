@@ -71,14 +71,35 @@ export default function Students() {
       <style>{animationStyles}</style>
       <div style={{ backgroundColor: 'var(--site-bg)' }} className="min-h-screen p-8">
         {/* Header */}
-        <div className="mb-10 animate-slide-up">
+          <div className="mb-10 animate-slide-up">
           <div className="inline-block mb-4 px-4 py-2 bg-orange-100 rounded-full">
             <span className="text-orange-600 font-semibold text-sm tracking-widest uppercase">Student Management</span>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Manage <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">Students</span>
           </h1>
-          <p className="text-gray-600 text-lg">Total Students: <span className="font-bold text-orange-600">{students.length}</span></p>
+          <div className="flex items-center justify-between">
+            <p className="text-gray-600 text-lg">Total Students: <span className="font-bold text-orange-600">{students.length}</span></p>
+            <div className="flex items-center gap-3">
+              <input
+                placeholder="Search..."
+                onChange={(e) => {
+                  const q = e.target.value.toLowerCase();
+                  // simple client-side filter
+                  if (!q) {
+                    // refetch or reset - for simplicity, refetch from server
+                    const token = localStorage.getItem("learnix_token");
+                    if (token) fetch('/api/admin/students', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).then(d => setStudents(Array.isArray(d) ? d : []));
+                    return;
+                  }
+                  setStudents((prev) => prev.filter(s => {
+                    return (s.name || '').toLowerCase().includes(q) || (s.email || '').toLowerCase().includes(q) || String(s.enrolled_courses_count || '').includes(q);
+                  }));
+                }}
+                className="px-3 py-2 border border-slate-200 rounded-md w-64 focus:outline-none"
+              />
+            </div>
+          </div>
         </div>
 
         {students.length === 0 ? (
@@ -99,6 +120,7 @@ export default function Students() {
                     <th className="p-4 font-bold text-gray-900 text-sm uppercase tracking-widest">Enrolled Courses</th>
                     <th className="p-4 font-bold text-gray-900 text-sm uppercase tracking-widest">Progress</th>
                     <th className="p-4 font-bold text-gray-900 text-sm uppercase tracking-widest">Status</th>
+                    <th className="p-4 font-bold text-gray-900 text-sm uppercase tracking-widest">Actions</th>
                     <th className="p-4 font-bold text-gray-900 text-sm uppercase tracking-widest">Joined On</th>
                   </tr>
                 </thead>
@@ -136,31 +158,65 @@ export default function Students() {
                       </td>
                       <td className="p-4">
                         {(() => {
+                          // Status logic:
+                          // - If last activity within 7 days => Active
+                          // - Else if enrollment/created date is older than 7 days AND avg_progress < 100 => Inactive
+                          // - Otherwise Active
+                          const now = Date.now();
+                          const sevenDays = 7 * 24 * 60 * 60 * 1000;
+
                           const lastActivity = student.last_activity || student.lastActivity || null;
-                          let isActive = false;
                           if (lastActivity) {
                             const last = new Date(lastActivity).getTime();
-                            const now = Date.now();
-                            const sevenDays = 7 * 24 * 60 * 60 * 1000;
-                            isActive = now - last <= sevenDays;
+                            if (now - last <= sevenDays) {
+                              return (
+                                <span className="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-1">
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                  </svg>
+                                  Active
+                                </span>
+                              );
+                            }
                           }
 
-                          return isActive ? (
+                          const enrolledOn = student.enrolled_on || student.enrolledAt || student.created_at || student.createdAt || null;
+                          if (enrolledOn) {
+                            const started = new Date(enrolledOn).getTime();
+                            const daysSince = Math.floor((now - started) / (24 * 60 * 60 * 1000));
+                            const progress = Number(student.avg_progress || 0);
+                            if (daysSince > 7 && progress < 100) {
+                              return (
+                                <span className="inline-block bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-1">
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM7.707 7.707a1 1 0 010-1.414L9.586 4.414a1 1 0 011.414 0L12.293 5.707a1 1 0 010 1.414L10.414 9.999l1.879 1.879a1 1 0 01-1.414 1.414L9 11.414 7.707 12.707a1 1 0 01-1.414-1.414L7.586 9.999 5.707 8.121a1 1 0 011.414-1.414L9 8.586l-1.293-1.293z" />
+                                  </svg>
+                                  Inactive
+                                </span>
+                              );
+                            }
+                          }
+
+                          return (
                             <span className="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-1">
                               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                               </svg>
                               Active
                             </span>
-                          ) : (
-                            <span className="inline-block bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-1">
-                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM7.707 7.707a1 1 0 010-1.414L9.586 4.414a1 1 0 011.414 0L12.293 5.707a1 1 0 010 1.414L10.414 9.999l1.879 1.879a1 1 0 01-1.414 1.414L9 11.414 7.707 12.707a1 1 0 01-1.414-1.414L7.586 9.999 5.707 8.121a1 1 0 011.414-1.414L9 8.586l-1.293-1.293z" />
-                              </svg>
-                              Inactive
-                            </span>
                           );
                         })()}
+                      </td>
+
+                      <td className="p-4 text-right">
+                        <div className="inline-flex items-center gap-2">
+                          <button title="View" onClick={() => window.location.href = `/admin/students/${student.id}` } className="p-2 rounded-md bg-slate-50 hover:bg-slate-100">
+                            <svg className="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                          </button>
+                          <button title="Edit" onClick={() => window.location.href = `/admin/students/edit/${student.id}` } className="p-2 rounded-md bg-slate-50 hover:bg-slate-100">
+                            <svg className="w-4 h-4 text-slate-700" fill="currentColor" viewBox="0 0 20 20"><path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/></svg>
+                          </button>
+                        </div>
                       </td>
                       <td className="p-4 text-gray-700 font-medium">
                         {student.created_at

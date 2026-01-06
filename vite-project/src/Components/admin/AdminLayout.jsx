@@ -84,6 +84,20 @@ export default function AdminLayout() {
             <IoShield className="w-5 h-5" />
             Admin Access
           </NavLink>
+
+          <NavLink
+            to="/admin/internships"
+            className={({ isActive }) =>
+              `${linkBase} flex items-center gap-3 ${
+                isActive
+                  ? "bg-white text-indigo-700 shadow-lg"
+                  : "text-white hover:bg-white/10"
+              }`
+            }
+          >
+            <IoBook className="w-5 h-5" />
+            Internship Applications
+          </NavLink>
         </nav>
       </aside>
 
