@@ -26,3 +26,12 @@
 .animate-delay-4 {
   animation-delay: 0.6s;
 }
+
+:root{
+  --site-bg: #FAF7E5;
+  --accent-orange-start: #f97316; /* orange-500 */
+  --accent-orange-end: #fb923c; /* orange-400 */
+  --footer-start: #312e81; /* indigo-900 approximation */
+  --footer-end: #4c1d95; /* purple-900 approximation */
+}
+

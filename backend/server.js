@@ -14,9 +14,12 @@ import enrollRoutes from "./routes/enrollRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import adminVideoRoutes from "./routes/adminVideoRoutes.js";
 import adminQuizRoutes from "./routes/adminQuizRoutes.js";
+import adminManagementRoutes from "./routes/adminManagementRoutes.js";
 import progressRoutes from "./routes/progressRoutes.js";
-import videoRoutes from "./routes/videoRoutes.js";
+import videoRoutes from "./routes/VideoRoutes.js";
 import certificateRoutes from "./routes/certificateRoutes.js";
+import internshipRoutes from "./routes/internshipRoutes.js";
+import quizResultRoutes from "./routes/quizResultRoutes.js";
 
 
 dotenv.config();
@@ -38,6 +41,9 @@ app.use(
       return callback(new Error("CORS blocked"), false);
     },
     credentials: true,
+    allowedHeaders: ["Authorization", "Content-Type", "Accept"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    exposedHeaders: ["Content-Disposition"]
   })
 );
 
@@ -75,17 +81,22 @@ app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/enroll", enrollRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/admin", adminManagementRoutes);
 app.use("/api/videos", videoRoutes);
 
 /* ADMIN CONTENT */
 app.use("/api/admin/videos", adminVideoRoutes);
 app.use("/api/admin/quizzes", adminQuizRoutes);
 
-/* STUDENT PROGRESS */
+/* STUDENT PROGRESS & QUIZZES */
 app.use("/api/progress", progressRoutes);
+app.use("/api/quiz-results", quizResultRoutes);
 
 /* CERTIFICATES */
 app.use("/api/certificates", certificateRoutes);
+
+/* INTERNSHIPS */
+app.use("/api/internships", internshipRoutes);
 
 app.get("/", (req, res) => {
   res.send("✅ Backend running");

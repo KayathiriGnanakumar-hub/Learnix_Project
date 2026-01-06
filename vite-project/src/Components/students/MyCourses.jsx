@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function MyCourses() {
@@ -6,11 +6,7 @@ export default function MyCourses() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    loadCourses();
-  }, []);
-
-  const loadCourses = async () => {
+  const loadCourses = useCallback(async () => {
     try {
       const token = localStorage.getItem("learnix_token");
 
@@ -40,7 +36,11 @@ export default function MyCourses() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    loadCourses();
+  }, [loadCourses]);
 
   if (loading) {
     return (
@@ -84,7 +84,7 @@ export default function MyCourses() {
           >
             {/* Course Image */}
             {course.image && (
-              <div className="h-48 bg-gradient-to-br from-indigo-500 to-blue-600 overflow-hidden">
+              <div className="h-48 bg-linear-to-br from-indigo-500 to-blue-600 overflow-hidden">
                 <img
                   src={course.image}
                   alt={course.title}

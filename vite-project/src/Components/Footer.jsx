@@ -8,7 +8,7 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-r from-indigo-900 to-purple-900 text-gray-200">
+    <footer style={{ background: `linear-gradient(90deg, var(--footer-start), var(--footer-end))` }} className="text-gray-200">
 
       {/* ================= COURSES SECTION ================= */}
       <div className="max-w-7xl mx-auto px-6 pt-14 pb-10">
@@ -74,11 +74,11 @@ export default function Footer() {
           <h4 className="text-lg font-semibold text-white mb-4">
             Quick Links
           </h4>
-          <ul className="space-y-2 text-sm">
-            <li><a href="/" className="hover:text-white">Home</a></li>
-            <li><a href="/courses" className="hover:text-white">Courses</a></li>
-            <li><a href="/register" className="hover:text-white">Register</a></li>
-            <li><a href="/contact" className="hover:text-white">Contact</a></li>
+            <ul className="space-y-2 text-sm">
+            <li><a href="/" className="hover:text-orange-300">Home</a></li>
+            <li><a href="/courses" className="hover:text-orange-300">Courses</a></li>
+            <li><a href="/register" className="hover:text-orange-300">Register</a></li>
+            <li><a href="/contact" className="hover:text-orange-300">Contact</a></li>
           </ul>
         </div>
 
@@ -102,7 +102,7 @@ export default function Footer() {
           (Icon, i) => (
             <div
               key={i}
-              className="bg-white text-black p-3 rounded-full hover:scale-110 transition cursor-pointer"
+              className="bg-white text-black p-3 rounded-full hover:scale-110 transition cursor-pointer hover:bg-gradient-to-r hover:from-orange-500 hover:to-orange-600 hover:text-white"
             >
               <Icon />
             </div>

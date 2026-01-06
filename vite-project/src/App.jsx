@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 /* PUBLIC */
 import PublicLayout from "./Components/public/PublicLayout";
 import Hero from "./Components/Hero";
+import Contact from "./Components/Contact";
 import Courses from "./Components/Courses";
 import CourseDetails from "./Components/CourseDetails";
 import Login from "./Components/Login";
@@ -20,11 +21,14 @@ import Progress from "./Components/students/Progress";
 import Quiz from "./Components/students/Quiz";
 import Certificates from "./Components/students/Certificates";
 import Internships from "./Components/students/internships";
+import Profile from "./Components/Profile";
 
 /* ADMIN */
 import AdminLayout from "./Components/admin/AdminLayout";
 import AdminDashboard from "./Components/admin/AdminDashboard";
 import ManageCourses from "./Components/admin/ManageCourses";
+import StudentsAdmin from "./Components/admin/Students";
+import AdminManagement from "./Components/admin/AdminManagement";
 
 /* AUTH */
 import ProtectedRoute from "./Components/auth/ProtectedRoute";
@@ -36,6 +40,7 @@ export default function App() {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Hero />} />
         <Route path="/courses" element={<Courses />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/course/:id" element={<CourseDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -76,6 +81,16 @@ export default function App() {
         <Route path="internships" element={<Internships />} />
       </Route>
 
+      {/* PROFILE (protected) */}
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
+
       {/* QUIZ - Protected Route */}
       <Route
         path="/quiz/:videoId"
@@ -96,7 +111,9 @@ export default function App() {
         }
       >
         <Route index element={<AdminDashboard />} />
+        <Route path="students" element={<StudentsAdmin />} />
         <Route path="courses" element={<ManageCourses />} />
+        <Route path="manage" element={<AdminManagement />} />
       </Route>
     </Routes>
   );

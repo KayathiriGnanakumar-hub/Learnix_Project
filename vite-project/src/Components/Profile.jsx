@@ -2,11 +2,11 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, logout } = useAuth();
   const navigate = useNavigate();
 
-  const logout = async () => {
-    await signOut(auth);
+  const handleLogout = () => {
+    logout();
     navigate("/login");
   };
 
@@ -32,14 +32,14 @@ export default function Profile() {
           <div>
             <p className="text-sm text-gray-500">Name</p>
             <p className="text-lg font-semibold text-gray-800">
-              {profile.name}
+              {profile.name || `${user.firstName || ''} ${user.lastName || ''}`}
             </p>
           </div>
 
           <div>
             <p className="text-sm text-gray-500">Email</p>
             <p className="text-lg font-semibold text-gray-800">
-              {profile.email}
+              {profile.email || user.email}
             </p>
           </div>
 
@@ -47,7 +47,7 @@ export default function Profile() {
             <p className="text-sm text-gray-500">Role</p>
             <span className="inline-block mt-1 px-3 py-1 rounded-full
               bg-indigo-100 text-indigo-700 text-sm font-semibold uppercase">
-              {profile.role}
+              {profile.role || (user.isAdmin ? 'Admin' : 'Student')}
             </span>
           </div>
 
@@ -56,7 +56,7 @@ export default function Profile() {
         {/* ACTIONS */}
         <div className="mt-8 flex justify-center">
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className="px-8 py-3 bg-red-600 text-white rounded-lg
             font-semibold hover:bg-red-700 transition"
           >
