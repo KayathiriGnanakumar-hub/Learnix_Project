@@ -63,18 +63,10 @@ export const getStudents = (req, res) => {
       GROUP_CONCAT(DISTINCT c.title SEPARATOR ', ') AS enrolled_courses,
       COUNT(DISTINCT e.id) AS enrolled_courses_count,
       ROUND(AVG(IFNULL(e.progress,0)),2) AS avg_progress,
-      -- last activity from video_progress.updated_at or quiz_results.created_at or enrollment.updated_at
-      MAX(
-        GREATEST(
-          IFNULL(MAX(vp.updated_at), '1970-01-01'),
-          IFNULL(MAX(qr.created_at), '1970-01-01'),
-          IFNULL(MAX(e.updated_at), '1970-01-01')
-        )
-      ) AS last_activity
+      COALESCE(MAX(qr.taken_at), MAX(e.completed_at)) AS last_activity
     FROM users u
     LEFT JOIN enrollments e ON u.email = e.user_email
     LEFT JOIN courses c ON e.course_id = c.id
-    LEFT JOIN video_progress vp ON vp.user_email = u.email
     LEFT JOIN quiz_results qr ON qr.user_id = u.id
     GROUP BY u.id, u.email
     ORDER BY u.created_at DESC
@@ -82,9 +74,17 @@ export const getStudents = (req, res) => {
 
   db.query(sql, (err, results) => {
     if (err) {
-      console.error("Fetch students error:", err);
-      return res.status(500).json({ message: "Failed to fetch students" });
+      console.error("❌ Fetch students error:", err.message);
+      console.error("Error code:", err.code);
+      console.error("Full error:", err);
+      return res.status(500).json({ 
+        message: "Failed to fetch students",
+        error: err.message,
+        code: err.code
+      });
     }
+
+    console.log(`✅ Fetched ${results.length} students from database`);
 
     // Normalize results so frontend can rely on fields
     const normalized = results.map((r) => ({
@@ -95,7 +95,7 @@ export const getStudents = (req, res) => {
       enrolled_courses: r.enrolled_courses || "",
       enrolled_courses_count: r.enrolled_courses_count || 0,
       avg_progress: r.avg_progress != null ? Number(r.avg_progress) : 0,
-      last_activity: r.last_activity && r.last_activity !== '1970-01-01' ? r.last_activity : null,
+      last_activity: r.last_activity || null,
     }));
 
     res.json(normalized);

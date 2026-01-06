@@ -73,71 +73,66 @@ export default function MyCourses() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">My Courses</h1>
+      <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">My Courses</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {courses.map((course) => (
           <div
             key={course.id}
-            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all overflow-hidden group cursor-pointer"
+            className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all overflow-hidden group cursor-pointer border border-slate-100"
             onClick={() => navigate(`/course/${course.id}`)}
           >
             {/* Course Image */}
             {course.image && (
-              <div className="h-48 bg-linear-to-br from-indigo-500 to-blue-600 overflow-hidden">
+              <div className="h-36 overflow-hidden bg-slate-50">
                 <img
                   src={course.image}
                   alt={course.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
             )}
 
             {/* Course Info */}
-            <div className="p-5">
-              <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+            <div className="p-4">
+              <h3 className="text-base md:text-lg font-semibold text-slate-900 mb-1 line-clamp-2">
                 {course.title}
               </h3>
 
-              <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+              <p className="text-xs md:text-sm text-slate-600 mb-3 line-clamp-2">
                 {course.description}
               </p>
 
-              <div className="space-y-2 text-sm text-gray-700 mb-4">
-                {course.instructor && (
-                  <div className="flex items-center gap-2">
-                    <span>👨‍🏫</span>
-                    <span>{course.instructor}</span>
-                  </div>
-                )}
-                {course.duration && (
-                  <div className="flex items-center gap-2">
-                    <span>⏱️</span>
-                    <span>{course.duration}</span>
-                  </div>
-                )}
-                {course.price && (
-                  <div className="flex items-center gap-2">
-                    <span>💰</span>
-                    <span className="font-bold text-indigo-600">${course.price}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Status Badge */}
-              <div className="flex items-center justify-between">
-                <div className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">
-                  ✓ Enrolled
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 text-xs text-slate-600">
+                  {course.instructor && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">👨‍🏫</span>
+                      <span className="truncate max-w-[8rem]">{course.instructor}</span>
+                    </div>
+                  )}
+                  {course.duration && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">⏱️</span>
+                      <span>{course.duration}</span>
+                    </div>
+                  )}
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/course/${course.id}`);
-                  }}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1 px-3 rounded transition-all text-sm"
-                >
-                  Continue
-                </button>
+
+                <div className="flex items-center gap-2">
+                  <div className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">
+                    ✓ Enrolled
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/course/${course.id}`);
+                    }}
+                    className="px-3 py-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-md hover:shadow-md transition-all text-sm"
+                  >
+                    Continue
+                  </button>
+                </div>
               </div>
             </div>
           </div>

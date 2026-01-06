@@ -93,6 +93,17 @@ function initializeDatabase() {
           }
         });
 
+        // Ensure admin_message column exists on internship_applications
+        const ensureAdminMessage = `ALTER TABLE internship_applications ADD COLUMN admin_message TEXT NULL`;
+        db.query(ensureAdminMessage, (err) => {
+          if (err) {
+            // Column may already exist; log at debug level
+            console.log("ℹ️ admin_message column may already exist or could not be added:", err.code || err.message);
+          } else {
+            console.log("✅ Added admin_message column to internship_applications");
+          }
+        });
+
         // Create admins table
         const adminsSql = fs.readFileSync(adminsPath, "utf8");
         db.query(adminsSql, (err) => {

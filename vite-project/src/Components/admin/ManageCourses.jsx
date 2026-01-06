@@ -228,7 +228,7 @@ export default function ManageCourses() {
       {/* =========================
           ADD / EDIT COURSE
       ========================= */}
-      <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 mb-10 hover:shadow-xl transition-all duration-300">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6 hover:shadow-md transition-all duration-200">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
           {editingId ? (
             <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full">Edit</span>
@@ -249,7 +249,7 @@ export default function ManageCourses() {
           type === "textarea" ? (
             <textarea
               key={key}
-              className="border border-gray-300 p-3 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+              className="border border-gray-200 p-2 w-full mb-3 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 transition text-sm"
               placeholder={label}
               rows="3"
               value={form[key]}
@@ -261,7 +261,7 @@ export default function ManageCourses() {
             <input
               key={key}
               type={type}
-              className="border border-gray-300 p-3 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+              className="border border-gray-200 p-2 w-full mb-3 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 transition text-sm"
               placeholder={label}
               value={form[key]}
               onChange={(e) =>
@@ -271,7 +271,7 @@ export default function ManageCourses() {
           )
         )}
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-center">
           {editingId ? (
             <>
               <button
@@ -291,10 +291,10 @@ export default function ManageCourses() {
               </button>
             </>
           ) : (
-            <button
-              onClick={handleAdd}
-              className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-orange-500/50 transition-all duration-300 flex items-center gap-2"
-            >
+              <button
+                onClick={handleAdd}
+                className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-md hover:shadow-md transition-all duration-200 flex items-center gap-2 text-sm"
+              >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
               </svg>
@@ -307,13 +307,13 @@ export default function ManageCourses() {
       {/* =========================
           ADD VIDEO (NEW SECTION)
       ========================= */}
-      <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 mb-10 hover:shadow-xl transition-all duration-300">
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6 hover:shadow-md transition-all duration-200">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
           🎬 Add Course Video
         </h2>
 
         <input
-          className="border border-gray-300 p-3 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+          className="border border-gray-200 p-2 w-full mb-3 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 transition text-sm"
           placeholder="Course ID"
           value={videoForm.courseId}
           onChange={(e) =>
@@ -348,10 +348,10 @@ export default function ManageCourses() {
           }
         />
 
-        <div className="flex gap-3">
+        <div className="flex gap-2 items-center">
           <button
             onClick={addVideo}
-            className="px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 flex items-center gap-2"
+            className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-semibold rounded-md hover:shadow-md transition-all duration-200 flex items-center gap-2 text-sm"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
@@ -390,43 +390,43 @@ export default function ManageCourses() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gradient-to-r from-orange-50 to-orange-100 border-b border-orange-200">
+              <thead className="bg-orange-50 border-b border-orange-100">
                 <tr>
-                  <th className="text-left p-4 font-bold text-gray-900">ID</th>
-                  <th className="text-left p-4 font-bold text-gray-900">Course</th>
-                  <th className="text-left p-4 font-bold text-gray-900">Video Title</th>
-                  <th className="text-left p-4 font-bold text-gray-900">YouTube URL</th>
-                  <th className="text-left p-4 font-bold text-gray-900">Order</th>
-                  <th className="text-center p-4 font-bold text-gray-900">Actions</th>
+                  <th className="text-left p-3 font-semibold text-gray-900 text-xs">ID</th>
+                  <th className="text-left p-3 font-semibold text-gray-900 text-xs">Course</th>
+                  <th className="text-left p-3 font-semibold text-gray-900 text-xs">Video Title</th>
+                  <th className="text-left p-3 font-semibold text-gray-900 text-xs">YouTube URL</th>
+                  <th className="text-left p-3 font-semibold text-gray-900 text-xs">Order</th>
+                  <th className="text-center p-3 font-semibold text-gray-900 text-xs">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {videos.map((video) => (
-                  <tr key={video.id} className="border-b hover:bg-orange-50/50 transition">
-                    <td className="p-4 text-gray-600 font-medium">{video.id}</td>
-                    <td className="p-4 font-semibold text-gray-900">{video.course_title || `Course ${video.course_id}`}</td>
-                    <td className="p-4 text-gray-700">{video.title}</td>
-                    <td className="p-4">
+                  <tr key={video.id} className="border-b hover:bg-orange-50/30 transition">
+                    <td className="p-3 text-gray-600 text-xs">{video.id}</td>
+                    <td className="p-3 font-medium text-gray-900 text-xs">{video.course_title || `Course ${video.course_id}`}</td>
+                    <td className="p-3 text-gray-700 text-xs">{video.title}</td>
+                    <td className="p-3">
                       <a 
                         href={video.youtube_url} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:text-blue-800 hover:underline text-xs break-all max-w-xs font-medium"
                       >
-                        {video.youtube_url?.substring(0, 40)}...
+                        {video.youtube_url?.substring(0, 40)}{video.youtube_url && video.youtube_url.length > 40 ? '...' : ''}
                       </a>
                     </td>
-                    <td className="p-4 text-center text-gray-600 font-medium">{video.order_no}</td>
-                    <td className="p-4 text-center space-x-2">
+                    <td className="p-3 text-center text-gray-600 text-xs">{video.order_no}</td>
+                    <td className="p-3 text-center space-x-2">
                       <button
                         onClick={() => editVideo(video)}
-                        className="px-3 py-1.5 bg-blue-500 text-white rounded-lg text-xs font-semibold hover:bg-blue-600 transition"
+                        className="px-2 py-1 bg-blue-500 text-white rounded-md text-xs font-semibold hover:bg-blue-600 transition"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => deleteVideo(video.id)}
-                        className="px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-semibold hover:bg-red-600 transition"
+                        className="px-2 py-1 bg-red-500 text-white rounded-md text-xs font-semibold hover:bg-red-600 transition"
                       >
                         Delete
                       </button>
@@ -451,69 +451,63 @@ export default function ManageCourses() {
           All Courses ({courses.length})
         </h2>
         {courses.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-12 text-center">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
             <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C6.5 6.253 2 10.998 2 17s4.5 10.747 10 10.747c5.5 0 10-4.998 10-11.747 0-5.502-4.5-10.747-10-10.747z" />
             </svg>
             <p className="text-gray-500 text-lg font-medium">No courses created yet</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {courses.map((course) => (
               <div
                 key={course.id}
-                className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
               >
                 {course.image && (
-                  <div className="h-40 overflow-hidden bg-gradient-to-br from-orange-100 to-orange-200">
+                  <div className="h-32 overflow-hidden bg-slate-50">
                     <img
                       src={course.image}
                       alt={course.title}
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-cover transition-transform duration-500"
                     />
                   </div>
                 )}
-                <div className="p-6">
-                  <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
+                <div className="p-4">
+                  <h3 className="font-semibold text-sm text-gray-900 mb-1 line-clamp-2">
                     {course.title}
                   </h3>
 
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">{course.description}</p>
+                  <p className="text-gray-600 text-xs mb-2 line-clamp-2">{course.description}</p>
                   
-                  <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between mb-3 pb-3 border-b border-gray-100">
+                    <div className="flex items-center gap-2 text-xs text-slate-600">
                       <svg className="w-4 h-4 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M8.688 16.4l7.07-7.07a1 1 0 10-1.414-1.414L7.979 14.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0z" />
                       </svg>
-                      <span className="text-xs text-gray-600 font-semibold">₹{course.price}</span>
+                      <span className="text-xs text-gray-600 font-medium">₹{course.price}</span>
                     </div>
                     {course.duration && (
-                      <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full font-medium">{course.duration}</span>
+                      <span className="text-xs bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full font-medium">{course.duration}</span>
                     )}
                   </div>
 
                   {course.instructor && (
-                    <p className="text-xs text-gray-500 mb-4">👨‍🏫 {course.instructor}</p>
+                    <p className="text-xs text-gray-500 mb-3">👨‍🏫 {course.instructor}</p>
                   )}
 
                   <div className="flex gap-2">
                     <button
                       onClick={() => startEdit(course)}
-                      className="flex-1 px-3 py-2 bg-blue-500 text-white rounded-lg text-sm font-semibold hover:bg-blue-600 transition flex items-center justify-center gap-1"
+                      className="flex-1 px-3 py-2 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600 transition flex items-center justify-center gap-1"
                     >
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                      </svg>
                       Edit
                     </button>
 
                     <button
                       onClick={() => handleDelete(course.id)}
-                      className="flex-1 px-3 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold hover:bg-red-600 transition flex items-center justify-center gap-1"
+                      className="flex-1 px-3 py-2 bg-red-500 text-white rounded-md text-sm font-medium hover:bg-red-600 transition flex items-center justify-center gap-1"
                     >
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                      </svg>
                       Delete
                     </button>
                   </div>
