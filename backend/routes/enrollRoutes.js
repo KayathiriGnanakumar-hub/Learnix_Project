@@ -1,5 +1,5 @@
 import express from "express";
-import { enrollCourse, getMyEnrollments } from "../controllers/enrollmentController.js";
+import { enrollCourse, getMyEnrollments } from "../Controllers/enrollmentController.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 
 const router = express.Router();

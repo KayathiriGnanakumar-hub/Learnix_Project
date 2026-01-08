@@ -35,7 +35,7 @@ app.use(
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
 
-      if (origin.startsWith("http://localhost")) {
+      if (origin.startsWith("http://localhost") || origin.startsWith("http://127.0.0.1")) {
         return callback(null, true);
       }
 
@@ -113,6 +113,11 @@ const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
   
-  // Initialize database tables and triggers
-  initializeDatabase();
+  // Initialize database tables and triggers (non-blocking)
+  try {
+    initializeDatabase();
+  } catch (err) {
+    console.error("❌ Database initialization failed:", err.message);
+    console.log("⚠️ Server will continue running without database features");
+  }
 });

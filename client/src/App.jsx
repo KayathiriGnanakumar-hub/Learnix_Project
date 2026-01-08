@@ -8,6 +8,8 @@ import Courses from "./Components/Courses";
 import CourseDetails from "./Components/CourseDetails";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
+import ForgotPassword from "./Components/ForgotPassword";
+import ResetPassword from "./Components/ResetPassword";
 
 /* PAYMENT */
 import Payment from "./Components/Payment";
@@ -15,7 +17,7 @@ import PaymentSuccess from "./Components/PaymentSuccess";
 
 /* STUDENT */
 import StudentLayout from "./Components/students/StudentLayout";
-import Dashboard from "./Components/students/Dashboard";
+import Dashboard from "./Components/students/dashboard"
 import MyCourses from "./Components/students/MyCourses";
 import Progress from "./Components/students/Progress";
 import Quiz from "./Components/students/Quiz";
@@ -47,6 +49,8 @@ export default function App() {
         <Route path="/course/:id" element={<CourseDetails />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Route>
 
       {/* PAYMENT */}

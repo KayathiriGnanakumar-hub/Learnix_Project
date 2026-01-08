@@ -1,5 +1,5 @@
 import express from "express";
-import { getAdminStats, getStudents, getStudentById } from "../controllers/adminController.js";
+import { getAdminStats, getStudents, getStudentById } from "../Controllers/adminController.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 
 const router = express.Router();

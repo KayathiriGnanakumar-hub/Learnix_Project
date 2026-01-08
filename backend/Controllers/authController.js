@@ -12,17 +12,23 @@ export const registerUser = async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+    const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
 
-  db.query(sql, [name, email, hashedPassword], (err) => {
-    if (err) {
-      return res.status(400).json({ message: "User already exists" });
-    }
+    db.query(sql, [name, email, hashedPassword], (err) => {
+      if (err) {
+        console.error("Database error during registration:", err);
+        return res.status(500).json({ message: "Database connection failed. Please try again later." });
+      }
 
-    res.json({ message: "User registered successfully" });
-  });
+      res.json({ message: "User registered successfully" });
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.status(500).json({ message: "Server error during registration" });
+  }
 };
 
 /* =========================
@@ -72,7 +78,12 @@ export const loginUser = (req, res) => {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      const token = jwt.sign({ id: user.id, email: user.email, role: "user" }, process.env.JWT_SECRET, { expiresIn: "1d" });
+      const token = jwt.sign({
+        id: user.id,
+        email: user.email,
+        role: "user",
+        tokenVersion: user.token_version || 1
+      }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
       return res.json({
         message: "Login successful",
