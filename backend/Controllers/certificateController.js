@@ -3,6 +3,7 @@ import PDFDocument from "pdfkit";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import fs from "fs";
+import { certificateTemplate } from "../templates/certificateTemplate.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -127,98 +128,158 @@ export const generateCertificate = (req, res) => {
       // Dimensions
       const pageWidth = doc.page.width;
       const pageHeight = doc.page.height;
-      const margin = 40;
+      const margin = 35;
+      const contentWidth = pageWidth - (margin * 2);
+      const contentHeight = pageHeight - (margin * 2);
 
-      console.log("🖨️  Generating PDF certificate for:", studentName);
+      console.log("🖨️ Generating PDF certificate for:", studentName);
 
-      // ===== BACKGROUND & BORDERS =====
-      // Golden border (outer)
-      doc.strokeColor("#d4af37").lineWidth(8);
-      doc.rect(margin / 2, margin / 2, pageWidth - margin, pageHeight - margin).stroke();
+      // ===== BACKGROUND COLOR =====
+      doc.fillColor("#FFFFFF").rect(0, 0, pageWidth, pageHeight).fill();
+
+      // ===== ORNAMENTAL BORDERS =====
+      // Outer gold border
+      doc.strokeColor("#D4AF37").lineWidth(10);
+      doc.rect(margin, margin, contentWidth, contentHeight).stroke();
 
       // Inner decorative border
-      doc.strokeColor("#d4af37").lineWidth(2);
-      doc.rect(margin + 10, margin + 10, pageWidth - margin * 2 - 20, pageHeight - margin * 2 - 20).stroke();
+      doc.strokeColor("#D4AF37").lineWidth(2);
+      doc.rect(margin + 12, margin + 12, contentWidth - 24, contentHeight - 24).stroke();
 
-      // ===== HEADER WITH LOGO & COMPANY NAME =====
-      // Attempt to draw the company logo from the project public folder
+      // ===== HEADER SECTION WITH LOGO AND INSTITUTION NAME =====
+      const headerY = margin + 25;
+      const headerContentY = headerY + 5;
+      const logoSize = 45; // Professional reduced size
+
+      // Left: Logo
       const logoPath = join(__dirname, '..', '..', 'vite-project', 'public', 'logo.png');
-      let headerTextX = margin + 40;
+      let logoDrawn = false;
       if (fs.existsSync(logoPath)) {
         try {
-          // draw logo on top-left
-          doc.image(logoPath, margin + 40, margin + 10, { width: 100, height: 60 });
-          headerTextX = margin + 160;
+          doc.image(logoPath, margin + 25, headerContentY, { width: logoSize, height: logoSize });
+          logoDrawn = true;
         } catch (imgErr) {
-          console.error('⚠️ Logo draw error:', imgErr.message);
+          console.error('Logo draw error:', imgErr.message);
         }
       }
 
-      // Company name (adjusted if logo present)
-      doc.fillColor("#667eea")
+      // Center: Institution Name (adjusted if logo present)
+      const institutionX = logoDrawn ? margin + 85 : margin + 25;
+      doc.fillColor("#00008B")
         .font("Helvetica-Bold")
-        .fontSize(28)
-        .text("Learnix Academy", headerTextX, margin + 20);
+        .fontSize(24)
+        .text("LEARNIX ACADEMY", institutionX, headerContentY + 5, { align: "left" });
 
-      // ===== MAIN TITLE =====
+      doc.fillColor("#666666")
+        .font("Helvetica")
+        .fontSize(10)
+        .text("Professional Learning Platform", institutionX, headerContentY + 32, { align: "left" });
+
+      // Right: QR Code placeholder
+      const qrX = pageWidth - margin - 55;
+      doc.strokeColor("#CCCCCC").lineWidth(1);
+      doc.rect(qrX, headerContentY, 50, 50).stroke();
+      doc.fillColor("#999999")
+        .font("Helvetica")
+        .fontSize(7)
+        .text("QR Code", qrX + 5, headerContentY + 20, { width: 40, align: "center" });
+
+      // ===== SEPARATOR LINE =====
+      const separatorY = headerY + 70;
+      doc.strokeColor("#D4AF37").lineWidth(1);
+      doc.moveTo(margin + 25, separatorY).lineTo(pageWidth - margin - 25, separatorY).stroke();
+
+      // ===== MAIN CERTIFICATE TITLE =====
+      const titleY = separatorY + 20;
+      doc.fillColor("#D4AF37")
+        .font("Helvetica-Bold")
+        .fontSize(44)
+        .text("Certificate of Achievement", margin + 25, titleY, { width: contentWidth - 50, align: "center" });
+
+      // ===== CERTIFICATE TEXT BODY =====
+      const bodyStartY = titleY + 60;
+
+      // "This is to certify that"
+      doc.fillColor("#1a1a1a")
+        .font("Helvetica")
+        .fontSize(14)
+        .text("This is to certify that", margin + 25, bodyStartY, { width: contentWidth - 50, align: "center" });
+
+      // Student name (most prominent)
+      doc.fillColor("#00008B")
+        .font("Helvetica-Bold")
+        .fontSize(38)
+        .text(studentName, margin + 25, bodyStartY + 25, { width: contentWidth - 50, align: "center" });
+
+      // "has successfully completed"
+      doc.fillColor("#1a1a1a")
+        .font("Helvetica")
+        .fontSize(13)
+        .text("has successfully completed the course", margin + 25, bodyStartY + 70, { width: contentWidth - 50, align: "center" });
+
+      // Course name (highlighted in gold)
+      doc.fillColor("#D4AF37")
+        .font("Helvetica-Bold")
+        .fontSize(30)
+        .text(courseName, margin + 25, bodyStartY + 95, { width: contentWidth - 50, align: "center" });
+
+      // Achievement message
+      doc.fillColor("#1a1a1a")
+        .font("Helvetica")
+        .fontSize(11)
+        .text("With honors and distinction for demonstrating exceptional commitment to learning excellence and professional development.", margin + 25, bodyStartY + 135, { width: contentWidth - 50, align: "center" });
+
+      // ===== SIGNATURE & DATE SECTION =====
+      const signatureY = pageHeight - 130;
+
+      // Draw signature lines with proper spacing
+      const lineY = signatureY + 45;
+      const lineLength = 80;
+
+      // Left signature (Instructor)
+      const leftSigX = margin + 40;
+      doc.strokeColor("#000000").lineWidth(1.5);
+      doc.moveTo(leftSigX, lineY).lineTo(leftSigX + lineLength, lineY).stroke();
       doc.fillColor("#1a1a1a")
         .font("Helvetica-Bold")
-        .fontSize(52)
-        .text("Certificate of Achievement", { align: "center", y: margin + 80 });
+        .fontSize(10)
+        .text("Instructor Signature", leftSigX, lineY + 8, { width: lineLength, align: "center" });
 
-      doc.moveDown(0.5);
+      // Center date section
+      const centerDateX = pageWidth / 2 - 60;
+      doc.strokeColor("#000000").lineWidth(1.5);
+      doc.moveTo(centerDateX, lineY).lineTo(centerDateX + lineLength, lineY).stroke();
+      doc.fillColor("#1a1a1a")
+        .font("Helvetica-Bold")
+        .fontSize(10)
+        .text("Date of Completion", centerDateX, lineY - 20, { width: lineLength, align: "center" });
+      doc.fillColor("#00008B")
+        .font("Helvetica-Bold")
+        .fontSize(11)
+        .text(completionDate, centerDateX, lineY + 8, { width: lineLength, align: "center" });
 
-      // Subtitle
-      doc.fillColor("#666666")
+      // Right signature (Director)
+      const rightSigX = pageWidth - margin - 120;
+      doc.strokeColor("#000000").lineWidth(1.5);
+      doc.moveTo(rightSigX, lineY).lineTo(rightSigX + lineLength, lineY).stroke();
+      doc.fillColor("#1a1a1a")
+        .font("Helvetica-Bold")
+        .fontSize(10)
+        .text("Director", rightSigX, lineY + 8, { width: lineLength, align: "center" });
+
+      // ===== FOOTER =====
+      const footerY = pageHeight - 32;
+      doc.fillColor("#999999")
+        .font("Helvetica")
+        .fontSize(8)
+        .text(`Certificate ID: ${certificateId} | Issue Date: ${new Date().toLocaleDateString()}`, margin + 25, footerY);
+
+      doc.fillColor("#D4AF37")
         .font("Helvetica-Oblique")
-        .fontSize(16)
-        .text("This is to certify that", { align: "center" });
+        .fontSize(8)
+        .text("Excellence in Learning | Professional Growth", pageWidth / 2 - 80, footerY, { width: 160, align: "center" });
 
-      doc.moveDown(1.5);
-
-      // ===== STUDENT NAME =====
-      doc.fillColor("#1a1a1a")
-        .font("Helvetica-Bold")
-        .fontSize(40)
-        .text(studentName, { align: "center" });
-
-      doc.moveDown(1.5);
-
-      // ===== COURSE SECTION =====
-      doc.fillColor("#666666")
-        .font("Helvetica")
-        .fontSize(14)
-        .text("has successfully completed the course", { align: "center" });
-
-      doc.moveDown(1);
-
-      // Course Name
-      doc.fillColor("#667eea")
-        .font("Helvetica-Bold")
-        .fontSize(32)
-        .text(courseName, { align: "center" });
-
-      doc.moveDown(2);
-
-      // Congratulations message
-      doc.fillColor("#1a1a1a")
-        .font("Helvetica")
-        .fontSize(14)
-        .text("With honors and recognition for outstanding achievement and commitment to learning excellence.", { align: "center" });
-
-      doc.moveDown(3);
-
-      // ===== FOOTER SECTION =====
-      const footerY = pageHeight - 100;
-
-      // Date in center
-      doc.fillColor("#666666").font("Helvetica").fontSize(11).text("Date of Completion", pageWidth / 2 - 60, footerY, { width: 120, align: "center" });
-      doc.fillColor("#1a1a1a").font("Helvetica-Bold").fontSize(13).text(completionDate, pageWidth / 2 - 60, footerY + 20, { width: 120, align: "center" });
-
-      // Certificate ID at bottom
-      doc.fillColor("#999999").font("Helvetica").fontSize(9).text(`Certificate ID: ${certificateId}`, margin + 20, pageHeight - 30);
-
-      console.log("✅ PDF generation complete, ending document");
+      console.log("✅ PDF generation complete");
       // Finalize PDF
       doc.end();
     } catch (error) {

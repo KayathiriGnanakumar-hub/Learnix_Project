@@ -117,8 +117,8 @@ export default function PaymentSuccess() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-green-50 to-white flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
+    <div className="min-h-screen flex items-center justify-center px-4" style={{backgroundColor: 'rgb(250, 247, 229)'}}>
+      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center border-2 border-orange-200">
         {enrolling ? (
           <>
             <div className="mb-6">

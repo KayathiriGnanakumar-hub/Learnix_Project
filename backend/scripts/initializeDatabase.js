@@ -16,6 +16,7 @@ function initializeDatabase() {
   const videoQuizPath = path.join(__dirname, "../sql/create_video_quizzes_table.sql");
   const internshipsPath = path.join(__dirname, "../sql/create_internships_table.sql");
   const adminsPath = path.join(__dirname, "../sql/create_admins_table.sql");
+  const contactInquiriesPath = path.join(__dirname, "../sql/create_contact_inquiries_table.sql");
 
   // Helper: ensure DB is reachable before running initialization SQL
   const ensureDbReady = (attempts = 5, delayMs = 2000) => {
@@ -111,6 +112,16 @@ function initializeDatabase() {
             console.error("❌ Admins table initialization error:", err.message);
           } else {
             console.log("✅ Admins table initialized or already exists");
+          }
+        });
+
+        // Create contact_inquiries table
+        const contactInquiriesSql = fs.readFileSync(contactInquiriesPath, "utf8");
+        db.query(contactInquiriesSql, (err) => {
+          if (err) {
+            console.error("❌ Contact inquiries table initialization error:", err.message);
+          } else {
+            console.log("✅ Contact inquiries table initialized or already exists");
           }
         });
 

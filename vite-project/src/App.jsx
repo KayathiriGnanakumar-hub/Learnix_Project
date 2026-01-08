@@ -30,6 +30,8 @@ import ManageCourses from "./Components/admin/ManageCourses";
 import StudentsAdmin from "./Components/admin/Students";
 import AdminManagement from "./Components/admin/AdminManagement";
 import InternshipApplications from "./Components/admin/InternshipApplications";
+import AdminStudentDetail from "./Components/admin/AdminStudentDetail";
+import ContactQueries from "./Components/admin/ContactQueries";
 
 /* AUTH */
 import ProtectedRoute from "./Components/auth/ProtectedRoute";
@@ -113,8 +115,10 @@ export default function App() {
       >
         <Route index element={<AdminDashboard />} />
         <Route path="students" element={<StudentsAdmin />} />
+        <Route path="students/:id" element={<AdminStudentDetail />} />
         <Route path="courses" element={<ManageCourses />} />
         <Route path="internships" element={<InternshipApplications />} />
+        <Route path="contact-queries" element={<ContactQueries />} />
         <Route path="manage" element={<AdminManagement />} />
       </Route>
     </Routes>

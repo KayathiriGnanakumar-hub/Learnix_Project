@@ -1,0 +1,16 @@
+✅ Server running on port 5001
+✅ DB reachable, proceeding with initialization
+✅ Enrollments tables initialized
+✅ Enrollments table migrated (or already up-to-date)
+✅ Video quiz tables initialized
+✅ Contact inquiries table initialized or already exists
+✅ Admins table initialized or already exists
+ℹ️ admin_message column may already exist or could not be added: ER_DUP_FIELDNAME
+✅ Internship tables initialized
+✅ Contact query inserted successfully, ID: 1
+✅ Confirmation email sent to testuser@example.com
+✅ Confirmation email sent to: testuser@example.com
+✅ Email sent to admin@learnix.com
+✅ Admin notification sent to: admin@learnix.com
+✅ Email sent to admin1@learnix.com
+✅ Admin notification sent to: admin1@learnix.com

@@ -20,6 +20,7 @@ import videoRoutes from "./routes/VideoRoutes.js";
 import certificateRoutes from "./routes/certificateRoutes.js";
 import internshipRoutes from "./routes/internshipRoutes.js";
 import quizResultRoutes from "./routes/quizResultRoutes.js";
+import contactRoutes from "./routes/contactRoutes.js";
 
 
 dotenv.config();
@@ -97,6 +98,9 @@ app.use("/api/certificates", certificateRoutes);
 
 /* INTERNSHIPS */
 app.use("/api/internships", internshipRoutes);
+
+/* CONTACT QUERIES */
+app.use("/api/contact", contactRoutes);
 
 app.get("/", (req, res) => {
   res.send("✅ Backend running");

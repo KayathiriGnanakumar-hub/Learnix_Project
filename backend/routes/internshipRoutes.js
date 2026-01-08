@@ -5,8 +5,10 @@ import {
   applyInternship,
   getUserApplications,
   checkEligibility,
-  withdrawApplication
-  , getAllApplications, replyToApplication
+  withdrawApplication,
+  getAllApplications,
+  replyToApplication,
+  selectDomain
 } from "../Controllers/internshipController.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 
@@ -18,6 +20,7 @@ router.get("/", getAllInternships);
 /* Protected Routes */
 router.get("/check/eligibility", verifyToken, checkEligibility);
 router.post("/apply", verifyToken, applyInternship);
+router.post("/select-domain", verifyToken, selectDomain);
 router.get("/applications/my", verifyToken, getUserApplications);
 router.put("/applications/:applicationId/withdraw", verifyToken, withdrawApplication);
 // Admin routes: list and reply to applications

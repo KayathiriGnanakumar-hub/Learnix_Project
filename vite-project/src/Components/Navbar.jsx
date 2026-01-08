@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { IoLogOut, IoPersonCircle, IoHome, IoBook, IoSchool } from "react-icons/io5";
+import { IoLogOut, IoPersonCircle, IoHome, IoBook, IoSchool, IoLogIn } from "react-icons/io5";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -30,20 +30,23 @@ export default function Navbar() {
     <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
-        {/* LOGO */}
-        <div onClick={goToHome} className="flex items-center gap-3 cursor-pointer">
+        {/* LEFT CORNER: LOGO AND NAME - Always visible */}
+        <div onClick={goToHome} className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition">
           <img src="/logo.png" alt="Learnix" className="h-10" onError={(e)=>{e.target.style.display='none'}} />
           <span className="text-xl font-bold text-indigo-600">Learnix</span>
         </div>
 
-        {/* NAV LINKS */}
+        {/* RIGHT CORNER: NAV LINKS */}
         <div className="flex items-center gap-6">
           <button onClick={goToHome} className={navLink}>Home</button>
           <Link to="/courses" className={navLink}>Courses</Link>
           <Link to="/contact" className={navLink}>Contact</Link>
 
           {!isAuthenticated ? (
-            <Link to="/register" className={navLink}>Register</Link>
+            <>
+              <Link to="/register" className={navLink}>Register</Link>
+              <Link to="/login" className={navLink}>Login</Link>
+            </>
           ) : null}
 
           {/* PROFILE DROPDOWN (Only shown when logged in) */}
@@ -112,15 +115,7 @@ export default function Navbar() {
                 </div>
               )}
             </div>
-          ) : (
-            // Login icon when not logged in
-            <Link
-              to="/login"
-              className="p-2 rounded-full hover:bg-indigo-50 transition cursor-pointer"
-            >
-              <IoSchool size={22} className="text-indigo-600" />
-            </Link>
-          )}
+          ) : null}
         </div>
 
       </div>

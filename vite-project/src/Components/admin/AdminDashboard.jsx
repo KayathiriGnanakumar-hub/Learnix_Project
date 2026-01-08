@@ -55,8 +55,28 @@ const Card = ({ title, value, icon, bgGradient, iconBg, index }) => (
 
 export default function AdminDashboard() {
   const [totalCourses, setTotalCourses] = useState(0);
-  const [totalStudents] = useState(120);
+  const [totalStudents, setTotalStudents] = useState(0);
   const [totalEnrollments, setTotalEnrollments] = useState(0);
+
+  useEffect(() => {
+    const token = localStorage.getItem("learnix_token");
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/admin/stats", {
+          headers: { Authorization: token ? `Bearer ${token}` : undefined },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        setTotalStudents(data.totalStudents || 0);
+        setTotalCourses(data.totalCourses || 0);
+        setTotalEnrollments(data.totalEnrollments || 0);
+      } catch (err) {
+        console.error("Failed to fetch admin stats:", err);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   useEffect(() => {
     const enrolled =

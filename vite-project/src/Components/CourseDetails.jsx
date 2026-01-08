@@ -74,10 +74,21 @@ export default function CourseDetails() {
         }
       );
 
+      if (!res.ok) {
+        console.error("Failed to check enrollment:", res.status);
+        setIsEnrolled(false);
+        return;
+      }
+
       const data = await res.json();
-      setIsEnrolled(data.some((c) => String(c.id) === String(id)));
+      if (Array.isArray(data)) {
+        setIsEnrolled(data.some((c) => String(c.id) === String(id)));
+      } else {
+        setIsEnrolled(false);
+      }
     } catch (err) {
       console.error("Error checking enrollment:", err);
+      setIsEnrolled(false);
     }
   }, [id]);
 
@@ -528,73 +539,40 @@ export default function CourseDetails() {
 
           {/* Right Column - Course Structure */}
           <div className="space-y-6">
-            {/* Course Structure Card */}
-            <div className="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden sticky top-40">
-              <div className="bg-linear-to-r from-orange-500 to-orange-600 p-6">
-                <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                  <BookOpen className="w-5 h-5" />
-                  Course Content
-                </h3>
+            {/* Course Structure Card - Simplified */}
+            <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+              <div className="bg-orange-500 p-4">
+                <h3 className="text-lg font-bold text-white">Course Content</h3>
               </div>
 
-              <div className="p-6">
-                <div className="space-y-3 mb-6">
-                  <div className="flex items-center gap-2 text-slate-700">
-                    <Clock className="w-5 h-5 text-orange-500" />
-                    <span>Total Duration</span>
-                    <span className="ml-auto font-semibold">{videos.length * 10} min</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-slate-700">
-                    <Play className="w-5 h-5 text-orange-500" />
-                    <span>Total Lessons</span>
-                    <span className="ml-auto font-semibold">{videos.length}</span>
-                  </div>
-                </div>
-
-                <div className="border-t border-slate-200 pt-6">
-                  <p className="font-semibold text-slate-900 mb-4">Lessons</p>
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {videos.length === 0 ? (
-                      <p className="text-slate-500 text-center py-4">No lessons yet</p>
-                    ) : (
-                      videos.map((video, index) => (
-                        <button
-                          key={video.id}
-                          onClick={() => setSelectedVideo(video)}
-                          className={`w-full text-left p-3 rounded-lg transition-all ${
-                            selectedVideo?.id === video.id
-                              ? "bg-orange-100 border-l-4 border-orange-500"
-                              : "bg-slate-50 hover:bg-slate-100 border-l-4 border-slate-200"
-                          }`}
-                        >
-                          <p className={`text-sm font-semibold truncate ${
-                            selectedVideo?.id === video.id
-                              ? "text-orange-900"
-                              : "text-slate-900"
-                          }`}>
-                            {index + 1}. {video.title}
-                          </p>
-                          <p className="text-xs text-slate-500 mt-1">~10 min</p>
-                          {watchedVideos[video.id] && (
-                            <p className="text-xs text-green-600 font-semibold mt-1">✓ Completed</p>
-                          )}
-                        </button>
-                      ))
-                    )}
-                  </div>
+              <div className="p-4">
+                <p className="text-sm text-slate-600 mb-4">{videos.length} Lessons</p>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {videos.length === 0 ? (
+                    <p className="text-slate-500 text-center py-4 text-sm">No lessons yet</p>
+                  ) : (
+                    videos.map((video, index) => (
+                      <button
+                        key={video.id}
+                        onClick={() => setSelectedVideo(video)}
+                        className={`w-full text-left p-2 rounded text-sm transition-all ${
+                          selectedVideo?.id === video.id
+                            ? "bg-orange-100 text-orange-900 font-semibold"
+                            : "bg-slate-50 text-slate-900 hover:bg-slate-100"
+                        }`}
+                      >
+                        {index + 1}. {video.title}
+                      </button>
+                    ))
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* Certificate Card */}
-            <div className="bg-linear-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-xl p-6">
-              <div className="flex items-start gap-3 mb-4">
-                <Award className="w-6 h-6 text-yellow-600 shrink-0" />
-                <h4 className="font-bold text-yellow-900">Certificate Included</h4>
-              </div>
-              <p className="text-sm text-yellow-800">
-                Complete all lessons and quizzes to earn your professional certificate of completion.
-              </p>
+            {/* Certificate Card - Simplified */}
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+              <p className="text-sm font-semibold text-orange-900">Certificate included</p>
+              <p className="text-xs text-orange-700 mt-1">Complete all lessons to earn it</p>
             </div>
           </div>
         </div>

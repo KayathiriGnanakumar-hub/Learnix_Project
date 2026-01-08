@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+import { FaChartPie, FaBook } from "react-icons/fa";
 
 export default function Progress() {
   const [courses, setCourses] = useState([]);
@@ -79,7 +80,7 @@ export default function Progress() {
 
   return (
     <div>
-      <h1 className="text-2xl md:text-3xl font-extrabold mb-6 text-slate-900">📊 Your Progress</h1>
+      <h1 className="text-2xl md:text-3xl font-extrabold mb-6 text-slate-900 flex items-center gap-2"><FaChartPie /> Your Progress</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {courses.map((c) => (
@@ -116,7 +117,7 @@ export default function Progress() {
                 </div>
               ) : (
                 <div className="inline-flex items-center gap-2 text-sm text-slate-600">
-                  <span>📚</span>
+                  <span className="text-orange-500"><FaBook /></span>
                   <span>{c.total - c.completed} left</span>
                 </div>
               )}
