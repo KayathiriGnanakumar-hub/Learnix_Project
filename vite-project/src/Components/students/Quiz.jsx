@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+import { FaBook, FaClipboardList } from "react-icons/fa";
 
 export default function Quiz() {
   const { videoId } = useParams();
@@ -246,7 +247,7 @@ export default function Quiz() {
               </>
             ) : (
               <>
-                <div className="text-6xl mb-4">📚</div>
+                <div className="text-6xl mb-4 text-orange-500"><FaBook /></div>
                 <h1 className="text-4xl font-bold text-orange-600 mb-4">Keep Practicing</h1>
                 <p className="text-xl text-gray-700 mb-8">
                   You scored <span className="font-bold text-orange-600">{correctCount}/{quizzes.length}</span> ({passPercentage.toFixed(1)}%)
@@ -331,7 +332,7 @@ export default function Quiz() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">📝 Video Quiz</h1>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2"><FaClipboardList /> Video Quiz</h1>
             <div className={`text-lg font-bold px-4 py-2 rounded-lg ${
               timeLeft < 60 
                 ? "bg-red-100 text-red-700" 

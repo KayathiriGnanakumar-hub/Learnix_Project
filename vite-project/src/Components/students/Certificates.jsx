@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { IoStar } from 'react-icons/io5';
+import { FaCertificate, FaCheck, FaCalendar, FaTasks, FaDownload } from 'react-icons/fa';
 
 export default function Certificates() {
   const [certificates, setCertificates] = useState([]);
@@ -140,7 +140,7 @@ export default function Certificates() {
   if (certificates.length === 0) {
     return (
       <div style={{ backgroundColor: '#FAF7E5' }} className="flex flex-col items-center justify-center min-h-96 text-center p-8">
-        <div className="text-6xl mb-4 text-orange-600">📜</div>
+        <div className="text-6xl mb-4 text-purple-600"><FaCertificate /></div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">No Certificates Yet</h2>
         <p className="text-gray-600 mb-6 max-w-md">
           Complete courses to earn certificates. Keep learning!
@@ -149,7 +149,7 @@ export default function Certificates() {
         {/* Debug Info */}
         {allEnrollments.length > 0 && (
             <div className="mt-8 w-full max-w-2xl bg-slate-100 rounded-lg p-4 text-left">
-            <h3 className="font-bold text-lg mb-4 text-gray-900">📊 Debug: Your Enrollments</h3>
+            <h3 className="font-bold text-lg mb-4 text-gray-900">Debug: Your Enrollments</h3>
             <div className="space-y-3 max-h-80 overflow-y-auto">
               {allEnrollments.map((course) => (
                 <div key={course.enrollment_id || course.id} className="bg-white p-3 rounded border border-slate-200">
@@ -160,9 +160,9 @@ export default function Certificates() {
                     <p className="text-sm text-gray-600">Completed: {new Date(course.completed_at).toLocaleDateString()}</p>
                   )}
                   {course.status === 'completed' && course.progress === 100 ? (
-                    <p className="text-sm mt-2 text-green-600 font-bold">✅ Ready for certificate!</p>
+                    <p className="text-sm mt-2 text-green-600 font-bold"><FaCheck className="inline mr-1" /> Ready for certificate!</p>
                   ) : (
-                    <p className="text-sm mt-2 text-red-600">❌ Not eligible yet</p>
+                    <p className="text-sm mt-2 text-red-600">Not eligible yet</p>
                   )}
                 </div>
               ))}
@@ -175,17 +175,17 @@ export default function Certificates() {
 
   return (
     <div style={{ backgroundColor: '#FAF7E5' }} className="p-6 rounded">
-      <h1 className="text-3xl font-bold text-slate-900 mb-8">🎓 My Certificates</h1>
+      <h1 className="text-3xl font-bold text-slate-900 mb-8 flex items-center gap-2"><FaCertificate /> My Certificates</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {certificates.map((cert) => (
           <div
             key={cert.enrollment_id || cert.id}
-            className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl shadow-lg border-2 border-orange-200 overflow-hidden hover:shadow-xl transition-all"
+            className="bg-gradient-to-r from-orange-400 to-yellow-100 rounded-xl shadow-lg border-2 border-orange-300 overflow-hidden hover:shadow-2xl hover:border-violet-500 transition-all transform hover:scale-105"
           >
             {/* Certificate Icon */}
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-6 text-center">
-              <IoStar className="text-5xl mb-2 text-white mx-auto" />
+            <div className="bg-gradient-to-r from-violet-600 to-purple-600 p-6 text-center hover:from-violet-700 hover:to-purple-700 transition">
+              <FaCertificate className="text-5xl mb-2 text-white mx-auto" />
               <p className="text-white font-semibold">Certificate of Achievement</p>
             </div>
 
@@ -197,19 +197,19 @@ export default function Certificates() {
               {/* Completion Info */}
               <div className="space-y-3 mb-6 text-sm">
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">✓</span>
+                  <FaCheck className="text-lg text-purple-600" />
                   <span className="text-slate-700">
                     <span className="font-semibold">Status:</span> Completed
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">📅</span>
+                  <FaCalendar className="text-lg text-purple-600" />
                   <span className="text-slate-700">
                     <span className="font-semibold">Date:</span> {cert.completedAt}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">🎯</span>
+                  <FaTasks className="text-lg text-purple-600" />
                   <span className="text-slate-700">
                     <span className="font-semibold">Progress:</span> {cert.progress}%
                   </span>
@@ -226,9 +226,9 @@ export default function Certificates() {
               {/* Download Button */}
               <button
                 onClick={() => downloadCertificate(cert.id)}
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
               >
-                <span>📥</span>
+                <FaDownload />
                 <span>Download Certificate</span>
               </button>
             </div>

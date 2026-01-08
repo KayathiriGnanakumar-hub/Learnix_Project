@@ -11,4 +11,4 @@ CREATE TABLE IF NOT EXISTS admins (
 
 -- Insert permanent admin if it doesn't exist
 INSERT IGNORE INTO admins (name, email, password, is_permanent) 
-VALUES ('Admin', 'admin@learnix.com', '$2a$10$wHLt5m/A8hj4f2Kj5Y1C8uZzF5G5H5I5J5K5L5M5N5O5P5Q5R5S5', TRUE);
+VALUES ('Admin', 'admin@learnix.com', '$2b$10$E.WRQvMQjyibuidECsuKS.2BpklcvsR1uR40xHusRWXLxfF2v/SEK', TRUE);

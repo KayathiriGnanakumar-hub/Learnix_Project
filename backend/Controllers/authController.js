@@ -30,38 +30,55 @@ export const registerUser = async (req, res) => {
 ========================= */
 export const loginUser = (req, res) => {
   const { email, password } = req.body;
+  // Prefer admin table first (admins may not be in users table)
+  const adminSql = "SELECT * FROM admins WHERE email = ? LIMIT 1";
 
-  const sql = "SELECT * FROM users WHERE email = ?";
-
-  db.query(sql, [email], async (err, result) => {
-    if (err || result.length === 0) {
-      return res.status(401).json({ message: "Invalid credentials" });
+  db.query(adminSql, [email], async (aErr, aRes) => {
+    if (aErr) {
+      console.error("Admin lookup error:", aErr);
+      return res.status(500).json({ message: "Server error" });
     }
 
-    const user = result[0];
-    const isMatch = await bcrypt.compare(password, user.password);
+    if (aRes && aRes.length > 0) {
+      const admin = aRes[0];
+      const match = await bcrypt.compare(password, admin.password);
+      if (!match) return res.status(401).json({ message: "Invalid credentials" });
 
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      const token = jwt.sign({ id: admin.id, email: admin.email, role: "admin" }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
+      return res.json({
+        message: "Login successful",
+        token,
+        user: { id: admin.id, name: admin.name, email: admin.email, isAdmin: true },
+      });
     }
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+    // Fallback to users table
+    const userSql = "SELECT * FROM users WHERE email = ? LIMIT 1";
+    db.query(userSql, [email], async (uErr, uRes) => {
+      if (uErr) {
+        console.error("User lookup error:", uErr);
+        return res.status(500).json({ message: "Server error" });
+      }
 
-    const ADMIN_EMAIL = "admin@learnix.com";
+      if (!uRes || uRes.length === 0) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
 
-    res.json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        isAdmin: user.email === ADMIN_EMAIL,
-      },
+      const user = uRes[0];
+      const isMatch = await bcrypt.compare(password, user.password);
+
+      if (!isMatch) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      const token = jwt.sign({ id: user.id, email: user.email, role: "user" }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
+      return res.json({
+        message: "Login successful",
+        token,
+        user: { id: user.id, name: user.name, email: user.email, isAdmin: false },
+      });
     });
   });
 };

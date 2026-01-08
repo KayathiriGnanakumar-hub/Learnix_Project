@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaBook, FaUser } from "react-icons/fa";
 
 export default function MyCourses() {
   const [courses, setCourses] = useState([]);
@@ -20,16 +21,23 @@ export default function MyCourses() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
 
       if (!res.ok) {
+        if (res.status === 401) {
+          console.error("Unauthorized: Token may be invalid or expired");
+          localStorage.removeItem("learnix_token");
+          navigate("/login");
+          return;
+        }
         throw new Error("Failed to fetch courses");
       }
 
       const data = await res.json();
-      setCourses(data || []);
+      setCourses(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error loading courses:", err);
       setCourses([]);
@@ -56,7 +64,7 @@ export default function MyCourses() {
   if (courses.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-96 text-center">
-        <div className="text-6xl mb-4">📚</div>
+        <div className="text-6xl mb-4 text-orange-500"><FaBook /></div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">No Courses Yet</h2>
         <p className="text-gray-600 mb-6 max-w-md">
           You haven't enrolled in any courses yet. Start learning today!
@@ -107,7 +115,7 @@ export default function MyCourses() {
                 <div className="flex items-center gap-3 text-xs text-slate-600">
                   {course.instructor && (
                     <div className="flex items-center gap-2">
-                      <span className="text-sm">👨‍🏫</span>
+                      <span className="text-orange-500"><FaUser /></span>
                       <span className="truncate max-w-[8rem]">{course.instructor}</span>
                     </div>
                   )}

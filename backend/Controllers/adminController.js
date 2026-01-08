@@ -102,6 +102,57 @@ export const getStudents = (req, res) => {
   });
 };
 
+/* =========================
+   GET SINGLE STUDENT
+========================= */
+export const getStudentById = (req, res) => {
+  const { id } = req.params;
+
+  const sql = `
+    SELECT
+      u.id,
+      u.name,
+      u.email,
+      u.created_at,
+      GROUP_CONCAT(DISTINCT c.title SEPARATOR ', ') AS enrolled_courses,
+      COUNT(DISTINCT e.id) AS enrolled_courses_count,
+      ROUND(AVG(IFNULL(e.progress,0)),2) AS avg_progress,
+      COALESCE(MAX(qr.taken_at), MAX(e.completed_at)) AS last_activity
+    FROM users u
+    LEFT JOIN enrollments e ON u.email = e.user_email
+    LEFT JOIN courses c ON e.course_id = c.id
+    LEFT JOIN quiz_results qr ON qr.user_id = u.id
+    WHERE u.id = ?
+    GROUP BY u.id, u.email
+    LIMIT 1
+  `;
+
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      console.error("❌ Fetch student error:", err.message);
+      return res.status(500).json({ message: "Failed to fetch student", error: err.message });
+    }
+
+    if (!results || results.length === 0) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const r = results[0];
+    const normalized = {
+      id: r.id,
+      name: r.name,
+      email: r.email,
+      created_at: r.created_at,
+      enrolled_courses: r.enrolled_courses || "",
+      enrolled_courses_count: r.enrolled_courses_count || 0,
+      avg_progress: r.avg_progress != null ? Number(r.avg_progress) : 0,
+      last_activity: r.last_activity || null,
+    };
+
+    res.json(normalized);
+  });
+};
+
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 

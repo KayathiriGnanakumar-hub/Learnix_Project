@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { IoHome, IoBook, IoPeople, IoShield, IoLogOut } from "react-icons/io5";
+import { IoHome, IoBook, IoPeople, IoShield, IoLogOut, IoMail } from "react-icons/io5";
 
 const linkBase =
   "block px-4 py-3 rounded-xl transition font-medium";
@@ -97,6 +97,20 @@ export default function AdminLayout() {
           >
             <IoBook className="w-5 h-5" />
             Internship Applications
+          </NavLink>
+
+          <NavLink
+            to="/admin/contact-queries"
+            className={({ isActive }) =>
+              `${linkBase} flex items-center gap-3 ${
+                isActive
+                  ? "bg-white text-indigo-700 shadow-lg"
+                  : "text-white hover:bg-white/10"
+              }`
+            }
+          >
+            <IoMail className="w-5 h-5" />
+            Contact Queries
           </NavLink>
         </nav>
       </aside>

@@ -1,4 +1,76 @@
+import { useState } from 'react';
+
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    // Validation
+    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+      setErrorMsg('Please fill in all required fields');
+      setLoading(false);
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setErrorMsg('Please enter a valid email address');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5001/api/contact/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccessMsg('Your query has been submitted successfully! We will get back to you soon.');
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: ''
+        });
+        // Clear success message after 5 seconds
+        setTimeout(() => setSuccessMsg(''), 5000);
+      } else {
+        setErrorMsg(data.message || 'Failed to submit query. Please try again.');
+      }
+    } catch (err) {
+      console.error('Error submitting contact form:', err);
+      setErrorMsg('Network error. Please check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const smallAnim = `@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}} .fadeInUp{animation:fadeInUp .6s ease-out both}`;
   return (
     <div style={{ backgroundColor: '#FAF7E5' }} className="min-h-[calc(100vh-80px)] py-20 px-4">
@@ -62,44 +134,75 @@ export default function Contact() {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Send us a message</h2>
               <p className="text-sm text-gray-600 mb-6">Fill out the form and we'll get back to you within 24 hours.</p>
 
-              <form className="space-y-4">
+              {/* Success Message */}
+              {successMsg && (
+                <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm">
+                  ✓ {successMsg}
+                </div>
+              )}
+
+              {/* Error Message */}
+              {errorMsg && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm">
+                  ✗ {errorMsg}
+                </div>
+              )}
+
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <input
                     type="text"
-                    placeholder="Your Name"
+                    name="name"
+                    placeholder="Your Name *"
+                    value={formData.name}
+                    onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-200 outline-none"
+                    required
                   />
                   <input
                     type="email"
-                    placeholder="Your Email"
+                    name="email"
+                    placeholder="Your Email *"
+                    value={formData.email}
+                    onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-200 outline-none"
+                    required
                   />
                 </div>
 
-                <input
-                  type="text"
-                  placeholder="Your Phone Number"
+                <label className="sr-only">Subject</label>
+                <select
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-200 outline-none"
-                />
-
-                <select className="w-full px-4 py-3 border border-gray-200 rounded-xl bg-white outline-none">
-                  <option>Inquiry Type</option>
-                  <option>General</option>
-                  <option>Support</option>
-                  <option>Partnership</option>
+                  required
+                >
+                  <option value="" disabled>Select subject *</option>
+                  <option value="general">General Inquiry</option>
+                  <option value="enrollment">Enrollment</option>
+                  <option value="courses">Courses & Content</option>
+                  <option value="internship">Internship / Placement</option>
+                  <option value="billing">Billing & Payments</option>
+                  <option value="other">Other</option>
                 </select>
 
                 <textarea
                   rows="5"
-                  placeholder="Your Message"
+                  name="message"
+                  placeholder="Your Message *"
+                  value={formData.message}
+                  onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-200 outline-none"
+                  required
                 />
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-semibold transition hover:shadow-lg hover:scale-[1.01]"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl font-semibold transition hover:shadow-lg hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Send Message
+                  {loading ? 'Sending...' : 'Send Message'}
                 </button>
               </form>
             </div>

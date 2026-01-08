@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FaUser } from "react-icons/fa";
 
 export default function ManageCourses() {
   const [courses, setCourses] = useState([]);
@@ -225,154 +226,140 @@ export default function ManageCourses() {
         <p className="text-gray-600">Create, edit, and manage all your courses and course videos</p>
       </div>
 
-      {/* =========================
-          ADD / EDIT COURSE
-      ========================= */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6 hover:shadow-md transition-all duration-200">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-          {editingId ? (
-            <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full">Edit</span>
-          ) : (
-            <span className="px-3 py-1 bg-orange-50 text-orange-700 rounded-full">New</span>
-          )}
-          <span>{editingId ? 'Edit Course' : 'Add New Course'}</span>
-        </h2>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column: Course form + Video form */}
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+              {editingId ? (
+                <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full">Edit</span>
+              ) : (
+                <span className="px-3 py-1 bg-orange-50 text-orange-700 rounded-full">New</span>
+              )}
+              <span>{editingId ? 'Edit Course' : 'Add New Course'}</span>
+            </h2>
 
-        {[
-          ["title", "Course Title", "text"],
-          ["description", "Course Description", "textarea"],
-          ["price", "Price (₹)", "number"],
-          ["image", "Course Image URL", "url"],
-          ["instructor", "Instructor Name", "text"],
-          ["duration", "Duration (e.g., 4 weeks)", "text"],
-        ].map(([key, label, type]) => 
-          type === "textarea" ? (
-            <textarea
-              key={key}
-              className="border border-gray-200 p-2 w-full mb-3 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 transition text-sm"
-              placeholder={label}
-              rows="3"
-              value={form[key]}
-              onChange={(e) =>
-                setForm({ ...form, [key]: e.target.value })
-              }
-            />
-          ) : (
+            {[
+              ["title", "Course Title", "text"],
+              ["description", "Course Description", "textarea"],
+              ["price", "Price (₹)", "number"],
+              ["image", "Course Image URL", "url"],
+              ["instructor", "Instructor Name", "text"],
+              ["duration", "Duration (e.g., 4 weeks)", "text"],
+            ].map(([key, label, type]) => 
+              type === "textarea" ? (
+                <textarea
+                  key={key}
+                  className="border border-gray-200 p-2 w-full mb-3 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 transition text-sm"
+                  placeholder={label}
+                  rows="3"
+                  value={form[key]}
+                  onChange={(e) =>
+                    setForm({ ...form, [key]: e.target.value })
+                  }
+                />
+              ) : (
+                <input
+                  key={key}
+                  type={type}
+                  className="border border-gray-200 p-2 w-full mb-3 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 transition text-sm"
+                  placeholder={label}
+                  value={form[key]}
+                  onChange={(e) =>
+                    setForm({ ...form, [key]: e.target.value })
+                  }
+                />
+              )
+            )}
+
+            <div className="flex gap-3 items-center">
+              {editingId ? (
+                <>
+                  <button
+                    onClick={handleUpdate}
+                    className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-green-500/50 transition-all duration-300 flex items-center gap-2"
+                  >
+                    Update Course
+                  </button>
+                  <button
+                    onClick={resetForm}
+                    className="px-6 py-3 bg-gray-400 text-white font-semibold rounded-lg hover:bg-gray-500 transition-all duration-300"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={handleAdd}
+                  className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-md hover:shadow-md transition-all duration-200 flex items-center gap-2 text-sm"
+                >
+                  Add Course
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">🎬 Add Course Video</h2>
+
             <input
-              key={key}
-              type={type}
               className="border border-gray-200 p-2 w-full mb-3 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 transition text-sm"
-              placeholder={label}
-              value={form[key]}
+              placeholder="Course ID"
+              value={videoForm.courseId}
               onChange={(e) =>
-                setForm({ ...form, [key]: e.target.value })
+                setVideoForm({ ...videoForm, courseId: e.target.value })
               }
             />
-          )
-        )}
 
-        <div className="flex gap-3 items-center">
-          {editingId ? (
-            <>
+            <input
+              className="border border-gray-300 p-3 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+              placeholder="Video Title"
+              value={videoForm.title}
+              onChange={(e) =>
+                setVideoForm({ ...videoForm, title: e.target.value })
+              }
+            />
+
+            <input
+              className="border border-gray-300 p-3 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+              placeholder="YouTube URL"
+              value={videoForm.youtubeUrl}
+              onChange={(e) =>
+                setVideoForm({ ...videoForm, youtubeUrl: e.target.value })
+              }
+            />
+
+            <input
+              className="border border-gray-300 p-3 w-full mb-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
+              placeholder="Order No"
+              value={videoForm.orderNo}
+              onChange={(e) =>
+                setVideoForm({ ...videoForm, orderNo: e.target.value })
+              }
+            />
+
+            <div className="flex gap-2 items-center">
               <button
-                onClick={handleUpdate}
-                className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-green-500/50 transition-all duration-300 flex items-center gap-2"
+                onClick={addVideo}
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-semibold rounded-md hover:shadow-md transition-all duration-200 flex items-center gap-2 text-sm"
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
-                </svg>
-                Update Course
+                {editingVideoId ? "Update Video" : "Add Video"}
               </button>
-              <button
-                onClick={resetForm}
-                className="px-6 py-3 bg-gray-400 text-white font-semibold rounded-lg hover:bg-gray-500 transition-all duration-300"
-              >
-                Cancel
-              </button>
-            </>
-          ) : (
-              <button
-                onClick={handleAdd}
-                className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-md hover:shadow-md transition-all duration-200 flex items-center gap-2 text-sm"
-              >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
-              </svg>
-              Add Course
-            </button>
-          )}
+              {editingVideoId && (
+                <button
+                  onClick={resetVideoForm}
+                  className="px-6 py-3 bg-gray-400 text-white font-semibold rounded-lg hover:bg-gray-500 transition-all duration-300"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* =========================
-          ADD VIDEO (NEW SECTION)
-      ========================= */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6 hover:shadow-md transition-all duration-200">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          🎬 Add Course Video
-        </h2>
-
-        <input
-          className="border border-gray-200 p-2 w-full mb-3 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 transition text-sm"
-          placeholder="Course ID"
-          value={videoForm.courseId}
-          onChange={(e) =>
-            setVideoForm({ ...videoForm, courseId: e.target.value })
-          }
-        />
-
-        <input
-          className="border border-gray-300 p-3 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
-          placeholder="Video Title"
-          value={videoForm.title}
-          onChange={(e) =>
-            setVideoForm({ ...videoForm, title: e.target.value })
-          }
-        />
-
-        <input
-          className="border border-gray-300 p-3 w-full mb-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
-          placeholder="YouTube URL"
-          value={videoForm.youtubeUrl}
-          onChange={(e) =>
-            setVideoForm({ ...videoForm, youtubeUrl: e.target.value })
-          }
-        />
-
-        <input
-          className="border border-gray-300 p-3 w-full mb-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition"
-          placeholder="Order No"
-          value={videoForm.orderNo}
-          onChange={(e) =>
-            setVideoForm({ ...videoForm, orderNo: e.target.value })
-          }
-        />
-
-        <div className="flex gap-2 items-center">
-          <button
-            onClick={addVideo}
-            className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-semibold rounded-md hover:shadow-md transition-all duration-200 flex items-center gap-2 text-sm"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
-            </svg>
-            {editingVideoId ? "Update Video" : "Add Video"}
-          </button>
-          {editingVideoId && (
-            <button
-              onClick={resetVideoForm}
-              className="px-6 py-3 bg-gray-400 text-white font-semibold rounded-lg hover:bg-gray-500 transition-all duration-300"
-            >
-              Cancel
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* =========================
-          VIDEOS LIST
-      ========================= */}
-      <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 mb-10 hover:shadow-xl transition-all duration-300">
+        {/* Right Column: Videos list and Courses grid */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
           <svg className="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
             <path d="M4.5 2a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2V4a2 2 0 00-2-2h-11z" />
@@ -493,7 +480,7 @@ export default function ManageCourses() {
                   </div>
 
                   {course.instructor && (
-                    <p className="text-xs text-gray-500 mb-3">👨‍🏫 {course.instructor}</p>
+                    <p className="text-xs text-gray-500 mb-3"><FaUser className="inline mr-1 text-orange-600" /> {course.instructor}</p>
                   )}
 
                   <div className="flex gap-2">
@@ -516,6 +503,8 @@ export default function ManageCourses() {
             ))}
           </div>
         )}
+      </div>
+        </div>
       </div>
     </div>
   );

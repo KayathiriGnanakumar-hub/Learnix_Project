@@ -342,3 +342,34 @@ export const replyToApplication = (req, res) => {
     });
   });
 };
+/* =========================
+   SELECT DOMAIN OF INTEREST
+========================= */
+export const selectDomain = (req, res) => {
+  const userId = req.user.id;
+  const { domain, message } = req.body;
+
+  if (!domain) {
+    return res.status(400).json({ message: "Domain is required" });
+  }
+
+  // Save domain preference to user profile or a preferences table
+  const sql = `
+    UPDATE users
+    SET domain_of_interest = ?
+    WHERE id = ?
+  `;
+
+  db.query(sql, [domain, userId], (err, results) => {
+    if (err) {
+      console.error("❌ Select domain error:", err);
+      return res.status(500).json({ message: "Failed to save domain preference" });
+    }
+
+    res.json({ 
+      message: "Domain preference saved successfully",
+      domain: domain,
+      userMessage: message || null
+    });
+  });
+};
